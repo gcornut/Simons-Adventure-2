@@ -17,10 +17,14 @@ game.winEntity = me.CollectableEntity.extend({
     // an object is touched by something (here collected)
     onCollision: function() {
  
-    	// display the game over screen
-    	me.state.change(me.state.GAME_END);
-    	// remove player
-        me.game.remove(this);
+	    var res = me.game.collide(this);
+	    if(res.obj.name == "mainPlayer") {
+    		// display the game over screen
+    		me.state.change(me.state.GAME_END);
+    		
+    		// remove player
+        	me.game.remove(this);
+	    }
     }
  
 });

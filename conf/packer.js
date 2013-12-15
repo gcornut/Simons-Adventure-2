@@ -41,7 +41,7 @@ module.exports = function(path, folders, compressJS) {
 	walk(path.join(folders.assets, "js", "simonsadventure"), function(err, gameRessources) {
 		if (err) throw err;
 		var libs = [
-			path.join(folders.assets, "js", "lib", "jquery-1.10.2.min.js"),
+			//path.join(folders.assets, "js", "lib", "jquery-1.10.2.min.js"),
 			path.join(folders.assets, "js", "lib", "melonJS-0.9.8.js"),
 			path.join(folders.assets, "js", "lib", "plugins", "debugPanel.js"),
 			path.join(folders.assets, "js", "game.js")

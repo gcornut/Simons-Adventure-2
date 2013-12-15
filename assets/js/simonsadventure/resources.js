@@ -11,7 +11,7 @@ game.resources = [
     {name: "title",  type:"image", src: "data/img/gui/title.png"},
     
     // sky
-    {name: "Sky",  type:"image", src: "data/img/map/sky.png"},
+    {name: "sky",  type:"image", src: "data/img/map/sky.png"},
     
     // town
     {name: "town",  type:"image", src: "data/img/map/town.png"},

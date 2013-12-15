@@ -49,7 +49,7 @@
   </data>
  </layer>
  <objectgroup name="Entity" width="162" height="37">
-  <object name="mainPlayer" x="5131" y="418" width="50" height="92">
+  <object name="mainPlayer" x="5131" y="412" width="50" height="92">
    <properties>
     <property name="image" value="hero"/>
     <property name="spriteheight" value="92"/>
@@ -57,12 +57,14 @@
    </properties>
   </object>
   <object name="winEntity" x="1" y="159" width="64" height="96"/>
+  <object name="compagny" x="2465" y="447" width="859" height="61"/>
+  <object name="compagny" x="2467" y="448" width="919" height="58"/>
  </objectgroup>
  <objectgroup name="Enemies" width="162" height="37">
   <object name="compagny" x="4032" y="256" width="192" height="64"/>
   <object name="compagny" x="3200" y="736" width="352" height="64"/>
   <object name="compagny" x="4128" y="448" width="316" height="64"/>
-  <object name="compagny" x="3232" y="448" width="316" height="64"/>
+  <object name="compagny" x="2434" y="444" width="316" height="64"/>
   <object name="compagny" x="3136" y="736" width="384" height="64"/>
   <object name="compagny" x="3104" y="736" width="384" height="64"/>
   <object name="compagny" x="3104" y="736" width="352" height="64"/>
@@ -70,7 +72,7 @@
   <object name="compagny" x="4088" y="224" width="426" height="61"/>
   <object name="compagny" x="4064" y="256" width="192" height="64"/>
   <object name="compagny" x="4224" y="448" width="192" height="64"/>
-  <object name="compagny" x="3168" y="448" width="192" height="64"/>
+  <object name="compagny" x="2433" y="445" width="1212" height="64"/>
   <object name="compagny" x="2048" y="320" width="192" height="64"/>
   <object name="compagny" x="2016" y="320" width="192" height="64"/>
   <object name="compagny" x="2080" y="320" width="192" height="64"/>
@@ -87,7 +89,7 @@
   <object name="compagny" x="256" y="128" width="160" height="64"/>
   <object name="compagny" x="288" y="128" width="160" height="64"/>
   <object name="compagny" x="256" y="128" width="192" height="64"/>
-  <object name="compagny" x="128" y="189" width="96" height="64"/>
+  <object name="compagny" x="27" y="445" width="381" height="64"/>
   <object name="compagny" x="2368" y="736" width="352" height="64"/>
   <object name="compagny" x="2304" y="736" width="384" height="64"/>
   <object name="compagny" x="2272" y="736" width="384" height="64"/>

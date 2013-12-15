@@ -35,7 +35,7 @@ game.compagny = me.ObjectEntity.extend({
         // size of sprite
  
         // make him start from the right
-        this.pos.x = x + (Math.floor(Math.random() * 10) + 1) + settings.width - settings.spritewidth;
+        this.pos.x = x + (Math.floor(Math.random() * (settings.width - settings.spritewidth)) + 1);
         this.walkLeft = (Math.floor(Math.random() * 2) + 1) == 1;
  
         // walking & jumping speed
