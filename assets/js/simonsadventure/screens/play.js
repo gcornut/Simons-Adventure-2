@@ -16,7 +16,8 @@ game.PlayScreen = me.ScreenObject.extend({
         // make sure everything is in the right order
         me.game.sort();
         
-        me.audio.playTrack("bg_music_long");
+        me.audio.stopTrack();
+        me.audio.playTrack("bg_game_music");
     },
 	
 	
@@ -25,6 +26,6 @@ game.PlayScreen = me.ScreenObject.extend({
 	 */
 	onDestroyEvent: function() {
 		// remove the HUD
-        me.game.disableHUD();
+        //me.game.disableHUD();
 	}
 });

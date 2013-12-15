@@ -5,8 +5,9 @@ game.compagny = me.ObjectEntity.extend({
     init: function(x, y, settings) {
         // define this here instead of tiled
         
-        nbCompagnies = 2;
-        switch(Math.floor(Math.random() * 2) + 1) {
+        nbCompagnies = 3;
+        compagny = Math.floor(Math.random() * nbCompagnies) + 1;
+        switch(compagny) {
 	        case 1: 
 	        	settings.image = "castle";
 	        	settings.spritewidth = 25;
@@ -17,17 +18,24 @@ game.compagny = me.ObjectEntity.extend({
 	        	settings.spritewidth = 41;
 	        	settings.spriteheight = 42;
 	        	break;
+	        case 3: 
+	        	settings.image = "prizm";
+	        	settings.spritewidth = 83;
+	        	settings.spriteheight = 41;	
+	        	break;
         }
  
         // call the parent constructor
         this.parent(x, y, settings);
+        
+        if(compagny == 3) this.updateColRect(21, 62, 2, 39);
  
         this.startX = x;
         this.endX = x + settings.width - settings.spritewidth;
         // size of sprite
  
         // make him start from the right
-        this.pos.x = x + (Math.floor(Math.random() * 4) + 1) + settings.width - settings.spritewidth;
+        this.pos.x = x + (Math.floor(Math.random() * 10) + 1) + settings.width - settings.spritewidth;
         this.walkLeft = (Math.floor(Math.random() * 2) + 1) == 1;
  
         // walking & jumping speed

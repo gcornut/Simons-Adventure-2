@@ -1,6 +1,7 @@
 game.resources = [
 
-	// win screen
+	// Win
+    {name: "winEntity", type:"image", src: "data/img/sprite/winEntity.png"},
     {name: "win",  type:"image", src: "data/img/gui/win.png"},
     
     // loose screen
@@ -25,9 +26,9 @@ game.resources = [
     {name: "hero", type:"image", src: "data/img/sprite/hero.png"},
 
     // Enemies
-    {name: "darkNote", type:"image", src: "data/img/sprite/sweet_note.png"},
-    {name: "castle", type:"image", src: "data/img/sprite/castle.png"},
-    {name: "helium", type:"image", src: "data/img/sprite/helium.png"},
+    {name: "castle", type:"image", src: "data/img/sprite/enemies/castle.png"},
+    {name: "helium", type:"image", src: "data/img/sprite/enemies/helium.png"},
+    {name: "prizm", type:"image", src: "data/img/sprite/enemies/prizm.png"},
     
     // Coins
     {name: "sweetNote", type:"image", src: "data/img/sprite/angry_empty_note.png"},
@@ -40,6 +41,6 @@ game.resources = [
 	
 	// sound effect
 	{name: "jump", type: "audio", src: "data/sfx/", channel : 2},
-	{name: "bg_music", type: "audio", src: "data/bgm/", channel : 1},
-	{name: "bg_music_long", type: "audio", src: "data/bgm/", channel : 1}
+	{name: "bg_loose", type: "audio", src: "data/bgm/", channel : 1},
+	{name: "bg_game_music", type: "audio", src: "data/bgm/", channel : 1}
 ];

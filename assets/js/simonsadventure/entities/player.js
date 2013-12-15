@@ -118,7 +118,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     if (this.life <= 0) {
                     	
                        // display the game over screen
-                 	   me.state.change(me.state.LOOSE);
+                 	   me.state.change(me.state.GAMEOVER);
                  	   // remove the player
                  	   me.game.remove(this);
                     }

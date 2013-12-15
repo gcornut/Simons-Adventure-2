@@ -5,6 +5,9 @@ game.winEntity = me.CollectableEntity.extend({
     // extending the init function is not mandatory
     // unless you need to add some extra initialization
     init: function(x, y, settings) {
+    	settings.image = "winEntity";
+        settings.spritewidth = 60;
+        settings.spriteheight = 101;
        
         // call the parent constructor
         this.parent(x, y, settings);
@@ -15,7 +18,7 @@ game.winEntity = me.CollectableEntity.extend({
     onCollision: function() {
  
     	// display the game over screen
-    	me.state.change(me.state.WIN);
+    	me.state.change(me.state.GAME_END);
     	// remove player
         me.game.remove(this);
     }

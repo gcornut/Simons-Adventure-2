@@ -49,14 +49,14 @@
   </data>
  </layer>
  <objectgroup name="Entity" width="162" height="37">
-  <object name="mainPlayer" x="5120" y="416" width="50" height="92">
+  <object name="mainPlayer" x="5131" y="418" width="50" height="92">
    <properties>
     <property name="image" value="hero"/>
     <property name="spriteheight" value="92"/>
     <property name="spritewidth" value="50"/>
    </properties>
   </object>
-  <object name="winEntity" x="0" y="192" width="64" height="64"/>
+  <object name="winEntity" x="1" y="159" width="64" height="96"/>
  </objectgroup>
  <objectgroup name="Enemies" width="162" height="37">
   <object name="compagny" x="4032" y="256" width="192" height="64"/>
@@ -87,7 +87,7 @@
   <object name="compagny" x="256" y="128" width="160" height="64"/>
   <object name="compagny" x="288" y="128" width="160" height="64"/>
   <object name="compagny" x="256" y="128" width="192" height="64"/>
-  <object name="compagny" x="128" y="192" width="96" height="64"/>
+  <object name="compagny" x="128" y="189" width="96" height="64"/>
   <object name="compagny" x="2368" y="736" width="352" height="64"/>
   <object name="compagny" x="2304" y="736" width="384" height="64"/>
   <object name="compagny" x="2272" y="736" width="384" height="64"/>

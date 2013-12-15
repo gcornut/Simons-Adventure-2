@@ -4,37 +4,40 @@ game.LooseScreen = me.ScreenObject.extend({
         this.parent(true);
  
         // title screen image
-        this.bg = null;
- 
-        this.font = null;
+        this.bg_image = me.loader.getImage("loose");
         
+        this.font = new me.BitmapFont("32x32_font", 32);         
     },
  
     // reset function
     onResetEvent: function() {
-        if (this.bg == null) {
-            // init stuff if not yet done
-            this.bg = me.loader.getImage("loose");
-            // font to display the menu items
-            this.font = new me.BitmapFont("32x32_font", 32); 
-        }
+        me.audio.stopTrack();
+        me.audio.playTrack("bg_loose");
+        
+        // enable the keyboard
+        //me.input.bindKey(me.input.KEY.ENTER, "enter", true); 
         
     },
  
     // update function
     update: function() {
+        /*if (me.input.isKeyPressed('enter')) {
+            me.state.change(me.state.PLAY);
+        }*/
         return true;
     },
  
     // draw function
     draw: function(context) {
-        context.drawImage(this.bg, 0, 0);
+        context.drawImage(this.bg_image, 0, 0);
  
         //this.font.draw(context, "GAME OVER!", 20, 240);
         //this.font.draw(context, me.game.HUD., 20, 272);
     },
  
     // destroy function
-    onDestroyEvent: function() { }
+    onDestroyEvent: function() {
+        //me.input.unbindKey(me.input.KEY.ENTER);
+    }
  
 });

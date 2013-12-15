@@ -4,24 +4,21 @@ game.WinScreen = me.ScreenObject.extend({
         this.parent(true);
  
         // title screen image
-        this.bg = null;
+        this.bg = me.loader.getImage("win");;
  
-        this.font = null;
+        this.font = new me.BitmapFont("32x32_font", 32);
     },
  
-    // reset function
+    /*// reset function
     onResetEvent: function() {
         if (this.bg == null) {
             // init stuff if not yet done
             this.bg = me.loader.getImage("win");
             // font to display the menu items
             this.font = new me.BitmapFont("32x32_font", 32); 
-            
-            me.audio.stopTrack();
-            me.audio.playTrack("bg_music");
         }
         
-    },
+    },*/
  
     // update function
     update: function() {
