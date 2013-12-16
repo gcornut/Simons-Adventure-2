@@ -59,6 +59,6 @@ var game = {
 		me.state.transition("fade", "#000000", 250);
 		
 		// start the game 
-		me.state.change(me.state.MENU);
+		me.state.change(me.state.GAME_END);
 	}
 };

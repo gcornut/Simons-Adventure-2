@@ -39,7 +39,7 @@ game.WinScreen = me.ScreenObject.extend({
     draw: function(context) {
         context.drawImage(this.bg, 0, 0);
  
-        this.font.draw(context, "CONGRATULATIONS!!!", 40, 240);
+        this.font.draw(context, "CONGRATULATIONS!!!", 40, 25);
         this.font.draw(context, "PRESS ENTER \nTO QUIT", 20, 400);
     },
  

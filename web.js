@@ -33,7 +33,7 @@ app.use(app.router);
 app.use(express.static(folders.public));
 
 
-var compressJS = true;
+var compressJS = false;
 /*// Developpement environment
 app.configure('development', function(){
 	console.log("[NODE_ENV] development");

@@ -25,6 +25,7 @@ game.winEntity = me.CollectableEntity.extend({
     		// remove player
         	me.game.remove(this);
 	    }
+	    else me.game.remove(res.obj);
     }
  
 });

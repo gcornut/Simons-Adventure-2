@@ -2,13 +2,13 @@ game.resources = [
 
 	// Win
     {name: "winEntity", type:"image", src: "data/img/sprite/winEntity.png"},
-    {name: "win",  type:"image", src: "data/img/gui/win.png"},
+    {name: "win",  type:"image", src: "data/img/gui/win.jpg"},
     
     // loose screen
-    {name: "loose",  type:"image", src: "data/img/gui/loose.png"},
+    {name: "loose",  type:"image", src: "data/img/gui/loose.jpg"},
 
 	// title screen
-    {name: "title",  type:"image", src: "data/img/gui/title.png"},
+    {name: "title",  type:"image", src: "data/img/gui/title.jpg"},
     
     // sky
     {name: "sky",  type:"image", src: "data/img/map/sky.png"},
