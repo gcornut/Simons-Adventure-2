@@ -11,8 +11,13 @@ game.PlayScreen = me.ScreenObject.extend({
         me.game.addHUD(0, 430, 640, 60);
  
         // add a new HUD item
-        me.game.HUD.addItem("score", new game.ScoreObject(620, 10));
- 
+        if(me.game.HUD.HUDItems.score != undefined) {
+	        me.game.HUD.setItemValue("score", 0);
+	        me.game.enableHUD();
+        }
+        else
+        	me.game.HUD.addItem("score", new game.ScoreObject(620, 10));
+        
         // make sure everything is in the right order
         me.game.sort();
         

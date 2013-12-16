@@ -11,6 +11,8 @@ game.TitleScreen = me.ScreenObject.extend({
  
     // reset function
     onResetEvent: function() {
+        me.audio.stopTrack();
+        me.game.disableHUD();
         if (this.title == null) {
             // init stuff if not yet done
             this.title = me.loader.getImage("title");
@@ -35,7 +37,9 @@ game.TitleScreen = me.ScreenObject.extend({
     draw: function(context) {
         context.drawImage(this.title, 0, 0);
  
-        this.font.draw(context, "PRESS ENTER TO PLAY", 20, 240);
+        this.font.draw(context, "PRESS ENTER \n       TO PLAY", 150, 200);
+        this.font.draw(context, "ARROWS: MOVE", 20, 400);
+        this.font.draw(context, "SPACE: JUMP", 20, 440);
     },
  
     // destroy function

@@ -46,13 +46,13 @@ var game = {
 		// add our player entity in the entity pool
 		me.entityPool.add("mainPlayer", game.PlayerEntity);
 		me.entityPool.add("compagny", game.compagny);
-		me.entityPool.add("sweetNote", game.sweetNote);
+		me.entityPool.add("coin", game.coin);
 		me.entityPool.add("winEntity", game.winEntity);
 				  
 		// enable the keyboard
 		me.input.bindKey(me.input.KEY.LEFT,  "left");
 		me.input.bindKey(me.input.KEY.RIGHT, "right");
-		me.input.bindKey(me.input.KEY.UP,	"jump", true);
+		me.input.bindKey(me.input.KEY.UP,	"jump", false);
 		me.input.bindKey(me.input.KEY.SPACE, "shoot", true);
 		
 		// set a global fading transition for the screen

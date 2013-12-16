@@ -33,7 +33,7 @@ app.use(app.router);
 app.use(express.static(folders.public));
 
 
-var compressJS = false;
+var compressJS = true;
 /*// Developpement environment
 app.configure('development', function(){
 	console.log("[NODE_ENV] development");
@@ -65,7 +65,13 @@ app.configure('production', function() {
 	app.use(express.errorHandler({ dumpExceptions: false, showStack: false }));
 	
 	compressJS = true;
-});*/
+});*///HTML5 cache manifest configuration
+require(path.join(folders.conf, "cache-manifest.js")) (
+	app,
+	path,
+	folders
+);
+
 
 // Merge & compress js files for client
 require(path.join(folders.conf, "packer.js")) (

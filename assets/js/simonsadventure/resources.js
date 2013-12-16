@@ -31,7 +31,7 @@ game.resources = [
     {name: "prizm", type:"image", src: "data/img/sprite/enemies/prizm.png"},
     
     // Coins
-    {name: "sweetNote", type:"image", src: "data/img/sprite/angry_empty_note.png"},
+    {name: "coin", type:"image", src: "data/img/sprite/coin.png"},
     
     // Bullet
     {name: "bullet", type:"image", src: "data/img/sprite/bullet.png"},

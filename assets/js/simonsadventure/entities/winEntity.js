@@ -18,7 +18,7 @@ game.winEntity = me.CollectableEntity.extend({
     onCollision: function() {
  
 	    var res = me.game.collide(this);
-	    if(res.obj.name == "mainPlayer") {
+	    if(res.obj.name == "mainplayer") {
     		// display the game over screen
     		me.state.change(me.state.GAME_END);
     		
