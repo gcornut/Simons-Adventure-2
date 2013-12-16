@@ -110,8 +110,8 @@
   <object name="compagny" x="929" y="120" width="416" height="68"/>
   <object name="compagny" x="481" y="223" width="479" height="65"/>
   <object name="compagny" x="3" y="184" width="334" height="70"/>
-  <object name="compagny" x="641" y="313" width="334" height="70"/>
-  <object name="compagny" x="451" y="315" width="334" height="70"/>
+  <object name="compagny" x="641" y="319" width="334" height="67"/>
+  <object name="compagny" x="434" y="320" width="334" height="66"/>
   <object name="compagny" x="1568" y="279" width="334" height="70"/>
   <object name="compagny" x="4384" y="223" width="490" height="63"/>
  </objectgroup>
