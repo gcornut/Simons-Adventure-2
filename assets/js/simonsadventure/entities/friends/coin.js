@@ -30,6 +30,7 @@ game.coin = me.CollectableEntity.extend({
     onCollision: function() {
     	// give some score
         me.game.HUD.updateItemValue("score", 250);
+        me.audio.play("coin");
  
         // make sure it cannot be collected "again"
         this.collidable = false;

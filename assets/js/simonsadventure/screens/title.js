@@ -39,7 +39,7 @@ game.TitleScreen = me.ScreenObject.extend({
  
         this.font.draw(context, "PRESS ENTER \n       TO PLAY", 150, 200);
         this.font.draw(context, "ARROWS: MOVE", 20, 400);
-        this.font.draw(context, "SPACE: JUMP", 20, 440);
+        this.font.draw(context, "SPACE: SHOOT", 20, 440);
     },
  
     // destroy function

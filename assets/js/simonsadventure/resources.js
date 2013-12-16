@@ -41,6 +41,9 @@ game.resources = [
 	
 	// sound effect
 	{name: "jump", type: "audio", src: "data/sfx/", channel : 2},
+	{name: "coin", type: "audio", src: "data/sfx/", channel : 2},
 	{name: "bg_loose", type: "audio", src: "data/bgm/", channel : 1},
-	{name: "bg_game_music", type: "audio", src: "data/bgm/", channel : 1}
+	{name: "bg_game_music", type: "audio", src: "data/bgm/", channel : 1},
+	{name: "bg_win_1", type: "audio", src: "data/bgm/", channel : 1},
+	{name: "bg_win_2", type: "audio", src: "data/bgm/", channel : 1}
 ];
