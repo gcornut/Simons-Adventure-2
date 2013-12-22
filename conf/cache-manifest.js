@@ -27,10 +27,10 @@ module.exports = function(app, path, folders) {
 	    	dir: path.join(folders.public, 'data'),
 	    	prefix: "/data/",
 	    	ignore: fileIgnore
-	    }, {
+	    }/*, {
 	    	file: path.join(folders.views, "index.ejs"),
 	    	path: "/"
-	    }],
+	    }*/],
 	    networks: ["*"],
 	    fallbacks: []
 	}));	
