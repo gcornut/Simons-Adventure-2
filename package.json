@@ -12,7 +12,7 @@
     "express":					"~3.3.4",
     "connect-cache-manifest":	">=0.1.1",
     "ejs":						">=0.8.4",
-    "socket.io":				">=0.9.16",
+    "websocket":				">=1.0.8",
     "node.packer": 				">=2.0.1"
   },
   "engines": {

@@ -153,7 +153,6 @@ ws.on("request", function(con) {
 				    connection.sendJSON({ok: true}, 'confirm friend');
 			    }
 			    else if(json.type === 'action') {
-			    	console.log("ping action");
 			    	if(connection.FID && connections[connection.FID]) {
 			    		connections[connection.FID].sendJSON(json);
 			    	}
