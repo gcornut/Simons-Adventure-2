@@ -167,9 +167,10 @@ game.Player = me.ObjectEntity.extend({
 			socket.emit("action", this.changes);
 		}*/
 		
+		var pixelAccuracy = 5;
 		if(
-			Math.floor(this.pos.x/10) != Math.floor(this.changes.pos.x/10)
-		    || Math.floor(this.pos.y/10) != Math.floor(this.changes.pos.y/10)
+			Math.floor(this.pos.x/5) != Math.floor(this.changes.pos.x/5)
+		    || Math.floor(this.pos.y/5) != Math.floor(this.changes.pos.y/5)
 		) {
 			this.changes.moved = true;
 			this.changes.pos = this.pos;
