@@ -62,13 +62,13 @@
 						connection.send(JSON.stringify(object));
 					}
 					
-					//Stuff to do on connection
-					var friend = prompt("Friend?");
-					connection.sendJSON({
-						type: 'set friend',
-						FID: friend
-					});
+					connection.isClosed = function() {
+						return connection.readyState === connection.CLOSED || connection.readyState === connection.CLOSING;
+					}
 					
+					connection.isOpened = function() {
+						return connection.readyState === connection.OPEN;
+					}
 				};
 				connection.onerror; //Stuff to do when error occurs
 				
@@ -85,6 +85,11 @@
 					if(json) {
 						if(json.type === 'confirm connect') {
 							console.log('Connected to server with id: '+json.id);
+							var friend = prompt("Your connection identifier is: "+json.id+"\n Now please enter the identifier of your friend.", "friend's connection identifier");
+							connection.sendJSON({
+								type: 'set friend',
+								FID: friend
+							});
 						}
 						else if(json.type === 'warn') {
 							console.log("[WARN] "+json.msg);

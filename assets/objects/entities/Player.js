@@ -174,7 +174,8 @@ game.Player = me.ObjectEntity.extend({
 			this.changes.moved = true;
 			this.changes.pos = this.pos;
 			
-			connection.sendJSON(this.changes, "action");
+			if(connection.isOpened())
+				connection.sendJSON(this.changes, "action");
 		}
 		
 		// update animation if necessary
