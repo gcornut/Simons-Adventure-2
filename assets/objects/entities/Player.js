@@ -170,7 +170,9 @@ game.Player = me.ObjectEntity.extend({
 			this.changes.moved = true;
 			this.changes.pos = this.pos;
 			
-			socket.emit("action", this.changes);
+			
+			if(!((Math.floor(Math.random() * 10) + 1) == 1))
+				socket.emit("action", this.changes);
 		}
 		
 		// update animation if necessary

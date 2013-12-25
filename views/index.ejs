@@ -49,7 +49,7 @@
 		<script>
             var remote = [];
             //var remote = prompt("Opponent?");
-            var socket = io.connect('http://localhost');
+            var socket = io.connect('http://'+location.hostname);
             
             var defaultName, defaultFriend;
             if (document.location.hash === "#P1") {
