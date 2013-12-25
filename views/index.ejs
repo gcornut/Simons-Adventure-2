@@ -1,88 +1,111 @@
 <!DOCTYPE HTML>
 <html manifest="site.manifest">
-    <head>
-        <title>Simon's Adventure</title>
-        <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <style type="text/css">
-	        body {
-	            background-color: #000;
-	            color: #fff;
-	        
-	            /* Allow mouse dragging. */
-	            -moz-user-select: none;
-	            -ms-user-select: none;
-	            -o-user-select: none;
-	            -webkit-user-select: none;
-	            user-select: none;
-	        	
-	        	/* disable touch panning/zooming */
-	        	-ms-touch-action: none;
-	        	touch-action: none;
-	        
-	            /* Allow canvas to hit the edges of the browser viewport. */
-	            margin: 0;
-	        }
-	        
-	        #screen canvas {
-	            margin: auto;
-	        
-	            /* Hide the gap for font descenders. */
-	            display: block;
-	        	
-	        	/* disable scaling interpolation */
-	        	image-rendering: optimizeSpeed;
-	        	image-rendering: -moz-crisp-edges;
-	        	image-rendering: -o-crisp-edges;
-	        	image-rendering: -webkit-optimize-contrast;
-	        	image-rendering: optimize-contrast;
-	        	-ms-interpolation-mode: nearest-neighbor;
-	        }
+	<head>
+		<title>Simon's Adventure</title>
+		<meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<style type="text/css">
+			body {
+				background-color: #000;
+				color: #fff;
+			
+				/* Allow mouse dragging. */
+				-moz-user-select: none;
+				-ms-user-select: none;
+				-o-user-select: none;
+				-webkit-user-select: none;
+				user-select: none;
+				
+				/* disable touch panning/zooming */
+				-ms-touch-action: none;
+				touch-action: none;
+			
+				/* Allow canvas to hit the edges of the browser viewport. */
+				margin: 0;
+			}
+			
+			#screen canvas {
+				margin: auto;
+			
+				/* Hide the gap for font descenders. */
+				display: block;
+				
+				/* disable scaling interpolation */
+				image-rendering: optimizeSpeed;
+				image-rendering: -moz-crisp-edges;
+				image-rendering: -o-crisp-edges;
+				image-rendering: -webkit-optimize-contrast;
+				image-rendering: optimize-contrast;
+				-ms-interpolation-mode: nearest-neighbor;
+			}
 		</style>
-    </head>
-    <body>
-        <!-- Canvas placeholder -->
+	</head>
+	<body>
+		<!-- Canvas placeholder -->
 		<div id="screen"></div>
 		
-        <script src="/socket.io/socket.io.js"></script>
+		<!--<script src="/socket.io/socket.io.js"></script>-->
 		<script>
-            var remote = [];
-            //var remote = prompt("Opponent?");
-            var socket = io.connect('http://'+location.hostname);
-            
-            var defaultName, defaultFriend;
-            if (document.location.hash === "#P1") {
-				defaultName = "P1";
-				defaultFriend = "P2";
-			} else if (document.location.hash === "#P2") {
-				defaultName = "P2";
-				defaultFriend = "P1";
+			var remote = {};
+			var WebSocketClient = window.WebSocket || window.MozWebSocket;
+			
+			var connection;
+			if(WebSocketClient) {
+				connection = new WebSocketClient(location.origin.replace(/^http/, 'ws'), 'echo-protocol');
+				
+				connection.onopen = function() {
+					connection.sendJSON = function(object, type) {
+						if(type != undefined) {
+							object.type = type;
+						}
+						connection.send(JSON.stringify(object));
+					}
+					
+					//Stuff to do on connection
+					var friend = prompt("Friend?");
+					connection.sendJSON({
+						type: 'set friend',
+						FID: friend
+					});
+					
+				};
+				connection.onerror; //Stuff to do when error occurs
+				
+				connection.onmessage = function(message) {
+					var json;
+					
+					try {
+						json = JSON.parse(message.data);	
+					}
+					catch(e) {
+						//Error parsing message data
+					}
+					
+					if(json) {
+						if(json.type === 'confirm connect') {
+							console.log('Connected to server with id: '+json.id);
+						}
+						else if(json.type === 'warn') {
+							console.log("[WARN] "+json.msg);
+						}
+						else if(json.type === 'confirm friend') {
+							console.log("Friend request state: "+json.ok);
+						}
+						else if(json.type === 'action') {
+							remote = json;
+						}
+					}
+				}
+				
+				
 			}
-            
-            function setName(name) {
-	            socket.emit("set name", name, function(ok) {
-	            	if(!ok) setName(prompt("Name already used\n"+"Name?"));
-	            	else window.name = name;
-	            });
-            }
-            setName(defaultName?defaultName:prompt("Name?"));
-            
-            var friend = defaultFriend?defaultFriend:prompt("Friend?");
-            socket.emit("set friend", friend, function(ok) {
-	            //if(!ok) setName(prompt("Name already used\n"+"Name?"));
-	            //else window.name = name;
-	        });
-            
-            socket.on("pm", function(from, msg) {
-            	console.log(msg);
-            });
-            socket.on('action', function (data) {
-            	remote.push(data);
-            });
+			else {
+				//TODO: Warn the user that his navigator is not compatible
+			}
 		</script>
-        <script type="text/javascript" src="/js/simonsadventure.js"></script>
-        
+		<script type="text/javascript" src="/js/simonsadventure.js"></script>
+		
 		<!-- Bootstrap & Mobile optimization tricks -->
 		<script type="text/javascript">
 			window.onReady(function onReady() {
@@ -117,5 +140,5 @@
 				}
 			});
 		</script>
-    </body>
+	</body>
 </html>

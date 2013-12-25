@@ -166,13 +166,15 @@ game.Player = me.ObjectEntity.extend({
 			
 			socket.emit("action", this.changes);
 		}*/
-		if(this.pos.x != this.changes.pos.x || this.pos.y != this.changes.pos.y) {
+		
+		if(
+			Math.floor(this.pos.x/10) != Math.floor(this.changes.pos.x/10)
+		    || Math.floor(this.pos.y/10) != Math.floor(this.changes.pos.y/10)
+		) {
 			this.changes.moved = true;
 			this.changes.pos = this.pos;
 			
-			
-			if(!((Math.floor(Math.random() * 10) + 1) == 1))
-				socket.emit("action", this.changes);
+			connection.sendJSON(this.changes, "action");
 		}
 		
 		// update animation if necessary

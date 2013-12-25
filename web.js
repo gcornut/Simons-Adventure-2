@@ -93,55 +93,81 @@ require(path.join(folders.conf, "routes.js")) (
 	folders
 );
 
-var httpServ = http.createServer(app),
-	io		 = require('socket.io').listen(httpServ);
+var httpServ = http.createServer(app);
+//	io		 = require('socket.io').listen(httpServ);
 
 httpServ.listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
 });
 
-/*
-io.configure(function () { 
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
+//Authorizes or not the connections based on origin
+var authorizedOrigin = function(origin) {
+	return true;
+}
+
+var connections = {}; 
+var lastConnectionID = 0;
+
+var WebSocketServer = require('websocket').server;
+
+var ws = new WebSocketServer({
+	httpServer: httpServ,
+	autoAcceptConnections: false
 });
-*/
-var sockets = {};
-io.sockets.on('connection', function (socket) {
-	socket.on('set name', function (name, callback) {
-		if(sockets[name] == undefined || true) {
-			socket.set('name', name, function () {
-				sockets[name] = socket;
-				callback(true);
-				console.log("New user: "+name);
-			});
+
+ws.on("request", function(con) {
+	if(!authorizedOrigin(con.origin)) {
+		request.reject();
+		return;
+	}
+	
+	//Accept connection
+	var connection = con.accept('echo-protocol', con.origin);
+	connections[++lastConnectionID] = connection;
+	connection.ID = lastConnectionID;
+	connection.sendJSON = function(object, type) {
+		if(type != undefined) {
+			object.type = type;
 		}
-		else callback(false);
+		connection.send(JSON.stringify(object));
+	}
+	console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' [' + connection.ID + '] connected.');
+	connection.sendJSON({id: connection.ID}, 'confirm connect');
+    
+    //On message
+    connection.on('message', function(message) {
+	    if(message.type === 'utf8') {
+		    var json;
+		    
+		    try {
+				json = JSON.parse(message.utf8Data);    
+		    }
+		    catch(e) {}
+		    
+		    if(json) {
+			    if(json.type === 'set friend') {
+				    //Store friend id in connection
+				    connection.FID = json.FID;
+				    console.log('['+connection.ID+'] requested friend ['+connection.FID+']')
+				    //Confirm
+				    connection.sendJSON({ok: true}, 'confirm friend');
+			    }
+			    else if(json.type === 'action') {
+			    	console.log("ping action");
+			    	if(connection.FID && connections[connection.FID]) {
+			    		connections[connection.FID].sendJSON(json);
+			    	}
+			    	else {
+			    		connection.sendJSON({msg:'No friend set'}, 'warn');
+			    	}
+			    }
+		    }
+	    }
     });
     
-    socket.on('set friend', function (name, callback) {
-		socket.set('friend', name, function(){});
+    //On close
+	connection.on('close', function(reasonCode, description) {
+		delete connections[connection.ID];
+        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' [' + connection.ID + '] disconnected.');
     });
-    
-    socket.on('pm', function(to, msg) {
-	    socket.get('name', function (err, name) {
-	    	console.log("Message from:"+name+" to:"+to);
-	    	console.log("["+msg+"]");
-	    	
-	    	if(sockets[to])
-	    		sockets[to].emit("pm", name, "["+name+"]: "+msg);
-      	});
-    });
-
-	socket.on('action', function (data) {
-		socket.get('name', function (err, name) {
-			socket.get('friend', function (err, friend) {
-				if(sockets[friend])
-					sockets[friend].emit('action', data);
-			});
-		});
-	});
 });
-
-
-console.log("toto");

@@ -43,8 +43,8 @@ game.RemotePlayer = me.ObjectEntity.extend({
 	------ */
 	update: function() {
 	
-		if(remote.length) {
-			changes = remote[remote.length-1];
+		if(Object.keys(remote).length !== 0) {
+			changes = remote;
 			//if(changes.vel != undefined) this.vel = changes.vel;
 			
 			if(changes.pos != undefined) this.pos = changes.pos;
@@ -54,7 +54,7 @@ game.RemotePlayer = me.ObjectEntity.extend({
 			    this.walkLeft = changes.walkLeft;
 			    this.flipX(this.walkLeft);
 			}
-			remote = [];
+			remote = {};
 		}
 		
 		//this.updateMovement();
