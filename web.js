@@ -66,11 +66,18 @@ app.configure('production', function() {
 	
 	compressJS = true;
 });*///HTML5 cache manifest configuration
-require(path.join(folders.conf, "cache-manifest.js")) (
+
+app.get("/site.manifest", function(req, res) {
+	res.status(404);
+	res.setHeader("Content-Type", "text/cache-manifest");
+	res.end("CACHE MANIFEST");
+});
+	
+/*require(path.join(folders.conf, "cache-manifest.js")) (
 	app,
 	path,
 	folders
-);
+);*/
 
 
 // Merge & compress js files for client
@@ -86,6 +93,49 @@ require(path.join(folders.conf, "routes.js")) (
 	folders
 );
 
-http.createServer(app).listen(app.get('port'), function(){
+var httpServ = http.createServer(app),
+	io		 = require('socket.io').listen(httpServ);
+
+httpServ.listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
 });
+
+var sockets = {};
+io.sockets.on('connection', function (socket) {
+	socket.on('set name', function (name, callback) {
+		if(sockets[name] == undefined || true) {
+			socket.set('name', name, function () {
+				sockets[name] = socket;
+				callback(true);
+				console.log("New user: "+name);
+			});
+		}
+		else callback(false);
+    });
+    
+    socket.on('set friend', function (name, callback) {
+		socket.set('friend', name, function(){});
+    });
+    
+    socket.on('pm', function(to, msg) {
+	    socket.get('name', function (err, name) {
+	    	console.log("Message from:"+name+" to:"+to);
+	    	console.log("["+msg+"]");
+	    	
+	    	if(sockets[to])
+	    		sockets[to].emit("pm", name, "["+name+"]: "+msg);
+      	});
+    });
+
+	socket.on('action', function (data) {
+		socket.get('name', function (err, name) {
+			socket.get('friend', function (err, friend) {
+				if(sockets[friend])
+					sockets[friend].emit('action', data);
+			});
+		});
+	});
+});
+
+
+console.log("toto");

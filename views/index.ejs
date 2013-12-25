@@ -44,9 +44,45 @@
     <body>
         <!-- Canvas placeholder -->
 		<div id="screen"></div>
-        
-        <script type="text/javascript" src="/js/simonsadventure.js"></script>
 		
+        <script src="/socket.io/socket.io.js"></script>
+		<script>
+            var remote = [];
+            //var remote = prompt("Opponent?");
+            var socket = io.connect('http://localhost');
+            
+            var defaultName, defaultFriend;
+            if (document.location.hash === "#P1") {
+				defaultName = "P1";
+				defaultFriend = "P2";
+			} else if (document.location.hash === "#P2") {
+				defaultName = "P2";
+				defaultFriend = "P1";
+			}
+            
+            function setName(name) {
+	            socket.emit("set name", name, function(ok) {
+	            	if(!ok) setName(prompt("Name already used\n"+"Name?"));
+	            	else window.name = name;
+	            });
+            }
+            setName(defaultName?defaultName:prompt("Name?"));
+            
+            var friend = defaultFriend?defaultFriend:prompt("Friend?");
+            socket.emit("set friend", friend, function(ok) {
+	            //if(!ok) setName(prompt("Name already used\n"+"Name?"));
+	            //else window.name = name;
+	        });
+            
+            socket.on("pm", function(from, msg) {
+            	console.log(msg);
+            });
+            socket.on('action', function (data) {
+            	remote.push(data);
+            });
+		</script>
+        <script type="text/javascript" src="/js/simonsadventure.js"></script>
+        
 		<!-- Bootstrap & Mobile optimization tricks -->
 		<script type="text/javascript">
 			window.onReady(function onReady() {

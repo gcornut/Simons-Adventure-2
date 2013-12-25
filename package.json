@@ -9,14 +9,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "express": "~3.3.4",
-    "connect-cache-manifest": ">=0.1.1",
-    "ejs": ">=0.8.4",
-    "node.packer": "*"
+    "express":					"~3.3.4",
+    "connect-cache-manifest":	">=0.1.1",
+    "ejs":						">=0.8.4",
+    "socket.io":				">=0.9.16",
+    "node.packer": 				">=2.0.1"
   },
   "engines": {
-    "node": "0.10.x",
-    "npm": "1.3.x"
+    "node":	"0.10.x",
+    "npm":	"1.3.x"
   },
   "keywords": [
     "node",
