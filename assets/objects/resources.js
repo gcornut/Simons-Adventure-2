@@ -23,7 +23,8 @@ game.resources = [
     {name: "lvl1", type: "tmx", src: "map/lvl1.tmx"},
     
     // Hero
-    {name: "hero", type:"image", src: "img/sprite/hero.png"},
+	{name: "simon",		type: "json",	src: "img/sprite/simon.json"},
+	{name: "simon",		type: "image",	src: "img/sprite/simon.png"},
 
     // Enemies
     {name: "castle", type:"image", src: "img/sprite/enemies/castle.png"},

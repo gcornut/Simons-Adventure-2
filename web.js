@@ -151,14 +151,18 @@ ws.on("request", function(con) {
 				    console.log('['+connection.ID+'] requested friend ['+connection.FID+']')
 				    //Confirm
 				    connection.sendJSON({ok: true}, 'confirm friend');
+				    
+				    if(connection.FID && connections[connection.FID]) {
+					    connections[connection.FID].FID = connection.ID;
+				    }
 			    }
 			    else if(json.type === 'action') {
 			    	if(connection.FID && connections[connection.FID]) {
 			    		connections[connection.FID].sendJSON(json);
 			    	}
-			    	else {
+			    	/*else {
 			    		connection.sendJSON({msg:'No friend set'}, 'warn');
-			    	}
+			    	}*/
 			    }
 		    }
 	    }

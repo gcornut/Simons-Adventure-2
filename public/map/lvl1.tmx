@@ -56,19 +56,15 @@
  <objectgroup name="Entity" width="162" height="37">
   <object name="player2" x="5088" y="256" width="68" height="68">
    <properties>
-    <property name="image" value="hero"/>
-    <property name="spriteheight" value="68"/>
-    <property name="spritewidth" value="68"/>
+    <property name="spriteheight" value="66"/>
+    <property name="spritewidth" value="66"/>
    </properties>
   </object>
   <object name="winEntity" x="1" y="159" width="64" height="96"/>
-  <object name="compagny" x="2465" y="447" width="859" height="61"/>
-  <object name="compagny" x="2467" y="448" width="919" height="58"/>
-  <object name="player1" x="5088" y="256" width="68" height="68">
+  <object name="player1" x="5088" y="260" width="68" height="68">
    <properties>
-    <property name="image" value="hero"/>
-    <property name="spriteheight" value="68"/>
-    <property name="spritewidth" value="68"/>
+    <property name="spriteheight" value="66"/>
+    <property name="spritewidth" value="66"/>
    </properties>
   </object>
  </objectgroup>
@@ -121,6 +117,8 @@
   <object name="compagny" x="434" y="320" width="334" height="66"/>
   <object name="compagny" x="1458" y="279" width="334" height="70"/>
   <object name="compagny" x="4384" y="223" width="490" height="63"/>
+  <object name="compagny" x="2459" y="449" width="859" height="61"/>
+  <object name="compagny" x="2460" y="447" width="919" height="58"/>
  </objectgroup>
  <objectgroup name="Coins" width="162" height="37">
   <object name="coin" x="1664" y="320" width="32" height="32"/>

@@ -17,10 +17,16 @@ game.RemotePlayer = me.ObjectEntity.extend({
 		this.setVelocity(0, 0);
 		this.updateColRect(18, 32, 12, 52);
 		
-		this.renderable.addAnimation("stand", [0, 1, 2], 30);
-		this.renderable.addAnimation("jump", [4, 5, 6]);
-		this.renderable.addAnimation("walk", [8, 9, 10, 11], 10);
+		this.renderable = game.texture.createAnimationFromName([
+			"jump_1.psd",	"jump_2.psd",	"jump_3.psd",
+			"stand_1.psd",	"stand_2.psd",	"stand_3.psd", 
+			"walk_1.psd",	"walk_2.psd",	"walk_3.psd",	"walk_4.psd"
+		]);
 		
+		this.renderable.addAnimation("stand", ["stand_1.psd", "stand_2.psd"], 300);
+		this.renderable.addAnimation("jump", ["jump_1.psd", "jump_2.psd", "jump_3.psd"]);
+		this.renderable.addAnimation("walk", ["walk_1.psd", "walk_2.psd", "walk_3.psd", "walk_4.psd"], 50);
+
 		this.renderable.setCurrentAnimation("stand");
 	   	 
 		this.anchorPoint.set(0,0);
@@ -34,10 +40,16 @@ game.RemotePlayer = me.ObjectEntity.extend({
 		//me.game.viewport.follow(this.pos, me.game.viewport.AXIS.HORIZONTAL);
 		this.life = 1000;
 		
-		this.walkLeft = true;
-		this.flipX(this.walkLeft);
+		this.walkRight = false;
+		this.flipX(!this.walkRight);
 	},
- 
+	
+	changeAnimation: function(animationName) {
+		if(!this.renderable.isCurrentAnimation(animationName)) {
+			this.renderable.setCurrentAnimation(animationName);
+		}
+	},
+	
 	/* -----
 	update the player pos
 	------ */
@@ -50,9 +62,12 @@ game.RemotePlayer = me.ObjectEntity.extend({
 			if(changes.pos != undefined) this.pos = changes.pos;
 			
 			if(changes.jumping != undefined) this.jumping = changes.jumping;
-			if(changes.walkLeft != undefined) {
-			    this.walkLeft = changes.walkLeft;
-			    this.flipX(this.walkLeft);
+			if(changes.walkRight != undefined) {
+			    this.walkRight = changes.walkRight;
+			    this.flipX(this.walkRight);
+			}
+			if(changes.animation != undefined) {
+			    this.changeAnimation(changes.animation);
 			}
 			remote = {};
 		}

@@ -11,18 +11,29 @@ game.Player = me.ObjectEntity.extend({
  
 	init: function(x, y, settings) {
 		
+		this.changes = {};
+		this.changes.vel = this.vel;
+		this.changes.pos = this.pos;
+		this.changes.moved = false;
+		
 		this.parent(x, y, settings);
 
 		// set the default horizontal & vertical speed (accel vector)
 		this.setVelocity(5, 18);
 		this.updateColRect(18, 32, 12, 52);
 		
-		this.renderable.addAnimation("stand", [0, 1, 2], 30);
-		this.renderable.addAnimation("jump", [4, 5, 6]);
-		this.renderable.addAnimation("walk", [8, 9, 10, 11], 10);
+		this.renderable = game.texture.createAnimationFromName([
+			"jump_1.psd",	"jump_2.psd",	"jump_3.psd",
+			"stand_1.psd",	"stand_2.psd",	"stand_3.psd", 
+			"walk_1.psd",	"walk_2.psd",	"walk_3.psd",	"walk_4.psd"
+		]);
 		
-		this.renderable.setCurrentAnimation("stand");
-	   	 
+		this.renderable.addAnimation("stand", ["stand_1.psd", "stand_2.psd"], 300);
+		this.renderable.addAnimation("jump", ["jump_1.psd", "jump_2.psd", "jump_3.psd"]);
+		this.renderable.addAnimation("walk", ["walk_1.psd", "walk_2.psd", "walk_3.psd", "walk_4.psd"], 50);
+		
+		this.changeAnimation("stand");
+		
 		this.anchorPoint.set(0,0);
 		//this.ylimit = me.game.currentLevel.height;
 
@@ -31,15 +42,19 @@ game.Player = me.ObjectEntity.extend({
 		//me.debug.renderHitBox = true;
 		this.alwaysUpdate = true;
 		
-		this.walkLeft = true;
-		this.flipX(this.walkLeft);
+		this.walkRight = true;
+		this.flipX(!this.walkRight);
 		
 		//me.game.viewport.follow(this.pos, me.game.viewport.AXIS.HORIZONTAL);
 		this.life = 1000;
 		
-		this.changes = {};
-		this.changes.vel = this.vel;
-		this.changes.moved = false;
+	},
+	
+	changeAnimation: function(animationName) {
+		if(!this.renderable.isCurrentAnimation(animationName)) {
+			this.renderable.setCurrentAnimation(animationName);
+			this.changes.animation = animationName;
+		}
 	},
  
 	/* -----
@@ -55,43 +70,40 @@ game.Player = me.ObjectEntity.extend({
 		this.changes.vel.x = this.vel.x;
 		this.changes.vel.y = this.vel.y;
 		this.changes.moved = false;
+		this.changes.animation = lastChanges.animation;
 	
 		//socket.emit("action", )
 		if (me.input.isKeyPressed('left') || me.input.isKeyPressed('right')) {		
 			if(me.input.isKeyPressed('left')) {
-				if(!this.jumping && !this.falling)
-				this.renderable.setCurrentAnimation("walk");
-		
-				this.walkLeft = true;
-				this.flipX(this.walkLeft);
+				this.walkRight = false;
 				
 				// update the entity velocity
 				this.vel.x -= this.accel.x * me.timer.tick;
 			}
-			else {			
-				if(!this.jumping && !this.falling)
-					this.renderable.setCurrentAnimation("walk");
-		
-				this.walkLeft = false;
-				this.flipX(this.walkLeft);
+			else {
+				this.walkRight = true;
 				
 				// update the entity velocity
 				this.vel.x += this.accel.x * me.timer.tick;
 			}
+			if(!this.jumping && !this.falling)
+				this.changeAnimation("walk");
 			
-			if(lastChanges.walkLeft != this.walkLeft)
-				this.changes.walkLeft = this.walkLeft;
+			this.flipX(this.walkRight);
+			if(lastChanges.walkRight != this.walkRight)
+				this.changes.walkRight = this.walkRight;
 			
 		} else {
 			if(!this.jumping && !this.falling)
-				this.renderable.setCurrentAnimation("stand");
+				this.changeAnimation("stand");
+				
 			this.parent();
 			this.vel.x = 0;
 			
 		}
 		
 		if (me.input.isKeyPressed('jump')) {
-			this.renderable.setCurrentAnimation("jump");
+			this.changeAnimation("jump");
 			
 			// make sure we are not already jumping or falling
 			if (!this.jumping && !this.falling) {
@@ -112,11 +124,11 @@ game.Player = me.ObjectEntity.extend({
 		
 		if (me.input.isKeyPressed('shoot')) {
 			for(var i = 1; i <= (Math.floor(Math.random() * 2) + 1); i++) {
-				if (this.walkLeft) {
-					shot = new bullet(this.pos.x+10, this.pos.y+30, this.walkLeft);
+				if (!this.walkRight) {
+					shot = new bullet(this.pos.x+10, this.pos.y+30, !this.walkRight);
 				}
 				else {
-					shot = new bullet(this.pos.x+50, this.pos.y+30, this.walkLeft);
+					shot = new bullet(this.pos.x+50, this.pos.y+30, !this.walkRight);
 				}
 				me.game.add(shot, this.z);
 			}
@@ -171,6 +183,7 @@ game.Player = me.ObjectEntity.extend({
 		if(
 			Math.floor(this.pos.x/5) != Math.floor(this.changes.pos.x/5)
 		    || Math.floor(this.pos.y/5) != Math.floor(this.changes.pos.y/5)
+		    || lastChanges.animation != this.changes.animation
 		) {
 			this.changes.moved = true;
 			this.changes.pos = this.pos;

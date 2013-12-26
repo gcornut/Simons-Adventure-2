@@ -54,6 +54,9 @@ var game = {
 		// set a global fading transition for the screen
 		me.state.transition("fade", "#000000", 250);
 		
+		//Load texture file
+		game.texture = new me.TextureAtlas(me.loader.getJSON("simon"), me.loader.getImage("simon"));
+		
 		// start the game on menu
 		me.state.change(me.state.MENU);
 	}

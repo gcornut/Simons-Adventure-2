@@ -1,0 +1,89 @@
+{"frames": [
+	{
+		"filename": "jump_1.psd",
+		"frame": {"x":68,"y":0,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{
+		"filename": "jump_2.psd",
+		"frame": {"x":136,"y":0,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{
+		"filename": "jump_3.psd",
+		"frame": {"x":68,"y":204,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{
+		"filename": "stand_1.psd",
+		"frame": {"x":68,"y":136,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{
+		"filename": "stand_2.psd",
+		"frame": {"x":68,"y":68,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{
+		"filename": "stand_3.psd",
+		"frame": {"x":136,"y":68,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{
+		"filename": "walk_1.psd",
+		"frame": {"x":0,"y":204,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{
+		"filename": "walk_2.psd",
+		"frame": {"x":0,"y":136,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{
+		"filename": "walk_3.psd",
+		"frame": {"x":0,"y":68,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{
+		"filename": "walk_4.psd",
+		"frame": {"x":0,"y":0,"w":66,"h":66},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+		"sourceSize": {"w":66,"h":66}
+	},
+	{"EOL":"true"}
+],
+"meta": {
+	"app": "ShoeBox",
+	"exporter": "melonJS",
+	"size": {"w":204,"h":272}
+}
+}
