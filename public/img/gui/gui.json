@@ -1,0 +1,89 @@
+{"frames": [
+	{
+		"filename": "bg.png",
+		"frame": {"x":0,"y":33,"w":32,"h":32},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+		"sourceSize": {"w":32,"h":32}
+	},
+	{
+		"filename": "bg_hover.png",
+		"frame": {"x":0,"y":0,"w":32,"h":32},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+		"sourceSize": {"w":32,"h":32}
+	},
+	{
+		"filename": "bl.png",
+		"frame": {"x":33,"y":18,"w":8,"h":8},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
+		"sourceSize": {"w":8,"h":8}
+	},
+	{
+		"filename": "br.png",
+		"frame": {"x":33,"y":29,"w":8,"h":8},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
+		"sourceSize": {"w":8,"h":8}
+	},
+	{
+		"filename": "hb.png",
+		"frame": {"x":33,"y":40,"w":1,"h":8},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":1,"h":8},
+		"sourceSize": {"w":1,"h":8}
+	},
+	{
+		"filename": "ht.png",
+		"frame": {"x":33,"y":49,"w":1,"h":8},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":1,"h":8},
+		"sourceSize": {"w":1,"h":8}
+	},
+	{
+		"filename": "tl.png",
+		"frame": {"x":33,"y":9,"w":8,"h":8},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
+		"sourceSize": {"w":8,"h":8}
+	},
+	{
+		"filename": "tr.png",
+		"frame": {"x":33,"y":0,"w":8,"h":8},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
+		"sourceSize": {"w":8,"h":8}
+	},
+	{
+		"filename": "vl.png",
+		"frame": {"x":33,"y":27,"w":8,"h":1},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":8,"h":1},
+		"sourceSize": {"w":8,"h":1}
+	},
+	{
+		"filename": "vr.png",
+		"frame": {"x":33,"y":38,"w":8,"h":1},
+		"rotated": false,
+		"trimmed": true,
+		"spriteSourceSize": {"x":0,"y":0,"w":8,"h":1},
+		"sourceSize": {"w":8,"h":1}
+	},
+	{"EOL":"true"}
+],
+"meta": {
+	"app": "ShoeBox",
+	"exporter": "melonJS",
+	"size": {"w":42,"h":66}
+}
+}

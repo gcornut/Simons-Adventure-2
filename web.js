@@ -105,7 +105,8 @@ var authorizedOrigin = function(origin) {
 	return true;
 }
 
-var connections = {}; 
+var connections = {};
+var games = {};
 var lastConnectionID = 0;
 
 var WebSocketServer = require('websocket').server;
@@ -133,44 +134,101 @@ ws.on("request", function(con) {
 	}
 	console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' [' + connection.ID + '] connected.');
 	connection.sendJSON({id: connection.ID}, 'confirm connect');
-    
-    //On message
-    connection.on('message', function(message) {
-	    if(message.type === 'utf8') {
-		    var json;
+	
+	//On message
+	var onHandlers = {};
+	connection.onMsg = function(type, callback) {
+		onHandlers[type] = callback;
+	}
+	connection.offMsg = function(type, callback) {
+		if(onHandlers[type] != undefined)
+			delete onHandlers[type];
+	}
+	connection.on('message', function(message) {
+		if(message.type === 'utf8') {
+			var json;
+			
+			try {
+				json = JSON.parse(message.utf8Data);	
+			}
+			catch(e) {}
+			
+			if(json) {
+				if(onHandlers[json.type] != undefined)
+					onHandlers[json.type](json);
+			}
+		}
+	});
+	
+	connection.onMsg('create game', function(object) {
+		var ok = false;
+		
+		if(games[object.name] == undefined) {
+		    games[object.name] = {
+		    	name: object.name,
+		    	player1: connection.ID,
+		    	player2: undefined
+		    };
+		    connection.game = games[object.name];
+		    console.log(
+		    	'['+connection.ID+'] '+
+		    	'created game named : '+
+		    	object.name
+		    );
 		    
-		    try {
-				json = JSON.parse(message.utf8Data);    
-		    }
-		    catch(e) {}
+		    ok = true;
+		}
+		
+		//Confirm
+		connection.sendJSON({"ok": ok}, 'confirm game create');
+	});
+	connection.onMsg('join game', function(object) {
+		var ok = false;
+					
+		if(games[object.name] != undefined) {
+		    games[object.name].player2 = connection.ID;
+		    connection.game = games[object.name];
+		    console.log(
+		    	'['+connection.ID+']'+
+		    	'joined game named : '+
+		    	object.name
+		    );
 		    
-		    if(json) {
-			    if(json.type === 'set friend') {
-				    //Store friend id in connection
-				    connection.FID = json.FID;
-				    console.log('['+connection.ID+'] requested friend ['+connection.FID+']')
-				    //Confirm
-				    connection.sendJSON({ok: true}, 'confirm friend');
-				    
-				    if(connection.FID && connections[connection.FID]) {
-					    connections[connection.FID].FID = connection.ID;
-				    }
-			    }
-			    else if(json.type === 'action') {
-			    	if(connection.FID && connections[connection.FID]) {
-			    		connections[connection.FID].sendJSON(json);
-			    	}
-			    	/*else {
-			    		connection.sendJSON({msg:'No friend set'}, 'warn');
-			    	}*/
-			    }
+		    ok = true;
+		}
+		
+		//Confirm
+		connection.sendJSON({"ok": ok}, 'confirm game join');
+	});
+	connection.onMsg('action', function(object) {
+		if(connection.game) {
+		    var recipient = undefined;
+		    if(connection.game.player1 == connection.ID) {
+		    	recipient = connection.game.player2;
 		    }
-	    }
-    });
-    
-    //On close
+		    else if(connection.game.player2 == connection.ID) {
+		    	recipient = connection.game.player1;
+		    }
+		    
+		    if(recipient != undefined)
+		    	connections[recipient].sendJSON(object);
+		    else
+		    	connection.sendJSON({}, "error friend disconnected");
+		}
+	});
+	
+	//On close
 	connection.on('close', function(reasonCode, description) {
+		if(connection.game) {
+			if(connection.game.player1 == connection.ID)
+				connection.game.player1 = undefined;
+			else if(connection.game.player2 == connection.ID)
+				connection.game.player2 = undefined;
+				
+			if(connection.game.player2 == undefined && connection.game.player2 == undefined)
+				delete games[connection.game.name];
+		}
 		delete connections[connection.ID];
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' [' + connection.ID + '] disconnected.');
-    });
+		console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' [' + connection.ID + '] disconnected.');
+	});
 });

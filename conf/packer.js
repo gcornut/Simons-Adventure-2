@@ -1,13 +1,13 @@
 module.exports = function(path, folders, compressJS) {		
 	var packer = require('node.packer');
 	compressJS = compressJS == undefined ? true : compressJS;
-	//compressJS = false;
 	
-	var defaultPacker = function(input, output) {
+	var defaultPacker = function(input, output, compressed) {
+		compressed = compressed == undefined ? compressJS : compressed;
 		packer({
 			log: true,
-			uglify: compressJS,
-			minify: compressJS,
+			uglify: compressed,
+			minify: compressed,
 			input: input,
 			output: output,
 			callback: function(err, code) { err && console.log(err)}
@@ -38,13 +38,24 @@ module.exports = function(path, folders, compressJS) {
 		});
 	};
 	
-	walk(path.join(folders.assets, "objects"), function(err, gameRessources) {
-		if (err) throw err;
-		var libs = [
-			//path.join(folders.assets, "js", "lib", "jquery-1.10.2.min.js"),
+	defaultPacker(
+		[
+			path.join(folders.assets, "lib", "jquery-1.10.2.min.js"),
+			path.join(folders.assets, "lib", "jquery.easing.min.js"),
+			path.join(folders.assets, "lib", "custom.jquery.lo-dash-map.js"),
 			path.join(folders.assets, "lib", "melonJS-0.9.10.js"),
 			path.join(folders.assets, "lib", "plugins", "debugPanel.js"),
-			path.join(folders.assets, "game.js")
+		], 
+		path.join(folders.public, "js", "libs.min.js"),
+		true
+	);
+	
+	walk(path.join(folders.assets, "game"), function(err, gameRessources) {
+		if (err) throw err;
+		var libs = [
+			path.join(folders.public, "js", "libs.min.js"),
+			path.join(folders.assets, "game.js"),
+			path.join(folders.assets, "resources.js")
 		];
 		
 		var jsFiles = libs.concat(gameRessources);
