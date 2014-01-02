@@ -17,7 +17,7 @@ game.gui.TextBox = game.gui.Component.extend({
 				lineSpacing: 8
 			},
 			options = $.extend(defaults, (options || {}));
-		
+			
 		this.text = options.text.toUpperCase().trim();
 		this.lineSpacing = options.lineSpacing;
 		this.align = options.align.trim().toUpperCase().split(" ").sort();
@@ -28,12 +28,21 @@ game.gui.TextBox = game.gui.Component.extend({
 		this.width = options.width;
 		this.height = options.height;
 		
+		this.textZone = new game.gui.Component({x:0, y:0, width: this.width, height: this.height});
+		
 		this.initText(true);
 		
 		this.parent($.extend(options, {width: this.width, height: this.height}));
 		
-		if(options.frame) 
+		if(options.frame) {
 			this.frame = new game.gui.FramedRect(this, frameOptions);
+			this.setWidth(this.width);
+			this.setHeight(this.height);
+			
+			var padding = this.frame.getPadding();
+			this.textZone.setX(padding.top);
+			this.textZone.setY(padding.right);
+		}
 	},
 	
 	initText: function(initializing) {
@@ -56,13 +65,13 @@ game.gui.TextBox = game.gui.Component.extend({
 		this.textHeight = this.lines.length * game.gui.font.sSize.x + (this.lineSpacing * (this.lines.length - 1));
 
 		this.textPosX = 0;
-		this.textPosY = 0;		
+		this.textPosY = 0;
 		
 		if(this.align.indexOf("CENTER") != -1 && !this.fitTextH) 
-			this.textPosX = (this.width / 2) - (this.textWidth / 2);
+			this.textPosX = (this.textZone.width / 2) - (this.textWidth / 2);
 			
 		if(this.align.indexOf("MIDDLE") != -1 && !this.fitTextV) 
-			this.textPosY = (this.height / 2) - (this.textHeight / 2);
+			this.textPosY = (this.textZone.height / 2) - (this.textHeight / 2);
 
 		this.needUpdate = true;
 		
@@ -77,23 +86,33 @@ game.gui.TextBox = game.gui.Component.extend({
 	},
 	
 	setWidth: function(width) {
-		this.parent(width);
-		
-		if(this.width != this.textWidth && this.fitTextH) {
+		this.textZone.setWidth(width);
+		if(this.textZone.width != this.textWidth && this.fitTextH) {
 			this.fitTextH = false;
 			this.initText();
 		}
-		if(this.frame) this.frame.setWidth(this.width);
+			
+		if(this.frame) {
+			this.frame.setWidth(this.width, true);
+			width = this.frame.width;
+		}
+		this.parent(width);
+		
 	},
 	
 	setHeight: function(height) {
-		this.parent(height);
-		
-		if(this.height != this.textHeight && this.fitTextV) {
+		this.textZone.setHeight(height);
+		if(this.textZone.height != this.textHeight && this.fitTextV) {
 			this.fitTextV = false;
 			this.initText();
 		}
-		if(this.frame) this.frame.setHeight(this.height);
+
+		if(this.frame) {
+			this.frame.setHeight(this.height, true);
+			height = this.frame.height;
+			this.initText();
+		}
+		this.parent(height);
 	},
 	
 	setText: function(text, fitTextH, fitTextV) {
@@ -106,39 +125,37 @@ game.gui.TextBox = game.gui.Component.extend({
 	
 	setX: function(x) {
 		this.parent(x);
-		if(this.frame) this.frame.setX(this.pos.x);
 	},
 	
 	setY: function(y) {
 		this.parent(y);
-		if(this.frame) this.frame.setY(this.pos.y);
 	},
 	
 	draw: function(context) {
-		if(this.frame) this.frame.draw(context);
+		if(this.frame) {
+			this.needUpdate = this.needUpdate || this.frame.needUpdate;
+			this.frame.render();
+		}	
 		
 		this.parent(
 			context,
 			function(ctx) {
-			
-				/*ctx.rect(0,0, this.width, this.height);
-				ctx.strokeStyle = "red";
-				ctx.stroke();
-				ctx.strokeStyle = "transparent";*/
+				var posX = this.textZone.pos.x + this.textPosX,
+					posY = this.textZone.pos.y + this.textPosY;
+					
+				if(this.frame)
+					ctx.drawImage(this.frame.cache, 0, 0, this.width, this.height);
 				
-				var posY = this.textPosY,
-			        posX = this.textPosX;
-			    
-			    if(this.lines.length > 1) {
-				    this.lines.map(function(line) {
-			            if(this.align[0] === "CENTER")
-			            	posX = this.textPosX + (this.textWidth / 2) - (line.length * game.gui.font.sSize.x / 2);
-			            
-			            game.gui.font.draw(ctx, line, posX, posY);
-			            posY += this.lineSpacing + game.gui.font.sSize.x;
-			        }, this); 
-			    }
-			    else game.gui.font.draw(ctx, this.lines[0], posX, posY);   
+				if(this.lines.length > 1) {
+					this.lines.map(function(line) {
+						if(this.align[0] === "CENTER")
+							posX = this.textZone.pos.x + this.textPosX + (this.textWidth / 2) - (line.length * game.gui.font.sSize.x / 2);
+						
+						game.gui.font.draw(ctx, line, posX, posY);
+						posY += this.lineSpacing + game.gui.font.sSize.x;
+					}, this); 
+				}
+				else game.gui.font.draw(ctx, this.lines[0], posX, posY);
 			},
 			this
 		);

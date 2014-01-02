@@ -3,7 +3,7 @@ game.gui.Panel = game.gui.Component.extend({
 
 	init: function(options) {
 		var defaults = {
-				spacing: 30,
+				spacing: 20,
 				height: 0,
 				width: 0,
 				layout: game.gui.Panel.VERTICAL,

@@ -14,8 +14,6 @@ game.gui.Component = me.Rect.extend({
 	 */
 	init: function(options) {
 		var defaults = {
-				centeredH: false,
-				centeredV: false,
 				cache: true
 			},
 			options = $.extend(defaults, (options || {}));
@@ -26,8 +24,10 @@ game.gui.Component = me.Rect.extend({
 		}
 		else {
 			this.pos = new me.Vector2d(options.x, options.y);
-			if(options.x == undefined) this.centerH();
-			if(options.y == undefined) this.centerV();
+			if(options.x == undefined && options.centeredH != false) this.centerH();
+			else this.centeredH = false;
+			if(options.y == undefined && options.centeredV != false) this.centerV();
+			else this.centeredV = false;
 		}
 		
 		//Width & Height
@@ -35,10 +35,10 @@ game.gui.Component = me.Rect.extend({
 		this.height = options.height;
 
 		// Centered horizontally
-		if(options.centeredH != false && !this.centeredH) this.centerH();
+		if(options.centeredH && !this.centeredH) this.centerH();
 		
 		// Centered vertically
-		if(options.centeredV != false && !this.centeredV) this.centerV();
+		if(options.centeredV && !this.centeredV) this.centerV();
 	
 		this.parent(this.pos, this.width, this.height);
 		
@@ -49,7 +49,7 @@ game.gui.Component = me.Rect.extend({
 			this.cache.context = this.cache.getContext("2d");
 			
 			this.cache.height = this.height;
-			this.cache.width = this.width;	
+			this.cache.width = this.width;
 		}
 	},
 	
@@ -116,23 +116,27 @@ game.gui.Component = me.Rect.extend({
 		this.centeredV = false;
 	},
 	
+	render: function() {
+		//this.needUpdate = true;
+		this.draw();
+	},
+	
 	draw: function(context, drawing, thisCallback) {
 		if(this.cache) {
 			if(!this.needUpdate) {
-				//context.clearRect(this.pos.x, this.pos.y, this.width, this.height);
-				context.drawImage(this.cache.context.canvas, this.pos.x, this.pos.y);
+				if(context) context.drawImage(this.cache, this.pos.x, this.pos.y);
 				return;
 			}
 			
-			this.cache.context.clearRect(0, 0, this.width, this.height);
+			this.cache.context.clearRect(0, 0, this.cache.width, this.cache.height);
 			try {		
 				jQuery.proxy(drawing, thisCallback)(this.cache.context);	
 			} catch(e) {console.log(e);}
 			
 			this.needUpdate = false;
-			this.draw(context, drawing);
+			this.draw(context, drawing, thisCallback);
 		}
-		else {
+		else if(context) {
 			try {		
 				jQuery.proxy(drawing, thisCallback)(context);	
 			} catch(e) {console.log(e);}

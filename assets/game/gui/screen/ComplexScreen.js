@@ -5,12 +5,11 @@ game.gui.screen.ComplexScreen = me.ScreenObject.extend({
 		
 		this.panel = new game.gui.Panel({y: topPadding, spacing: spacing});
 		
-		//this.needUpdate = true;
 		//me.input.bindKey(me.input.KEY.ENTER, "enter", true); 
 	},
 	
 	update: function() {
-		return true; //this.needUpdate;
+		return true;
 	},
 	
 	add: function(component) {

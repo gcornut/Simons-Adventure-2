@@ -4,9 +4,10 @@ game.gui.FramedRect = game.gui.Component.extend({
 	 */
 	init: function(parentRect, options) {
 		var defaults = {
+				x: 0, y: 0,
 				bgImage: game.gui.getImageFromTexture("bg.png")
 			},
-			options = $.extend(defaults, (options || {}));
+			options = $.extend(defaults, options || {});
 	
 		this.parts = ["tr", "tl", "br", "bl", "ht", "hb", "vr", "vl"];
 		
@@ -25,12 +26,13 @@ game.gui.FramedRect = game.gui.Component.extend({
 			left: this.sprites["tl"].width,
 		}
 		
-		this.parent(this.adaptDimensions({
-			x: parentRect.pos.x,
-			y: parentRect.pos.y,
-			width: parentRect.width, 
-			height: parentRect.height
-		}));
+		this.parent($.extend(
+			options,
+			this.adaptDimensions({
+				width: parentRect.width, 
+				height: parentRect.height
+			})
+		));
 		
 		this.initCornerSpritePos();
 		
@@ -69,11 +71,11 @@ game.gui.FramedRect = game.gui.Component.extend({
 	},
 	
 	setX: function(x) {
-		this.parent(this.adaptDimensions({x: x}).x);
+		this.parent(x);
 	},
 	
 	setY: function(y) {
-		this.parent(this.adaptDimensions({y: y}).y);
+		this.parent(y);
 	},
 	
 	getPadding: function() {

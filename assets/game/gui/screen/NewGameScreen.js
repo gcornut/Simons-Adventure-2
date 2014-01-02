@@ -9,28 +9,31 @@ game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
 		this.input = null;
 		
 		this.popup = null;
+		
+		this.active = true;
 	},
 	
 	validate: function() {
 		if(game.connection.isClosed()) game.connection.init();
 		if(this.input.text != "") {
 			if(game.connection.sendJSON({name: this.input.text}, "create game")) {
-				this.onDestroyEvent();
-				this.popup = new game.gui.PopUpFrame("creating game");
-				var popup = this.popup;
 				
-				me.input.bindKey(me.input.KEY.ESC, "esc", true);
-				game.connection.on("confirm game create", function(confirm) {
+				this.popup = new game.gui.PopUpFrame("creating game", this);
+				
+				game.connection.on("confirm game create", jQuery.proxy(function(confirm) {
 					if(confirm.ok) {
-						popup.setText("waiting for\n player 2");
+						this.popup.setText("waiting for\n player 2");
 					}
-					else popup.setText("name allready\nin use");
-				});
+					else this.popup.setText("name allready\nin use");
+				}, this));
 			}
 		}
 	},
 
 	onResetEvent: function() {
+		
+		this.active = true;
+		
 		if(game.connection.isClosed()) game.connection.init();
 		
 		if (this.bgImage == null) {
@@ -57,6 +60,7 @@ game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
 				})
 			]);
 		}
+		this.popup = null;
 		
 		this.parent();
 		me.input.bindKey(me.input.KEY.ESC, "esc", true);
@@ -64,32 +68,30 @@ game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
 	},
 
 	onDestroyEvent: function() {
+		this.active = false;
+		
 		me.input.unbindKey(me.input.KEY.ESC);
 		me.input.unbindKey(me.input.KEY.ENTER);
 		this.input.setText("");
 		game.connection.off("confirm create game");
 		this.parent();
-		this.popup = null;
 	},
 
 	draw: function(context) {
-		if(me.input.isKeyPressed("enter"))
-			this.okBtn.clicked();
-		if(me.input.isKeyPressed("esc")) {
-			if(this.popup != null){
-				this.popup = null;
-				this.onResetEvent();
+		if(this.active) {
+			if(me.input.isKeyPressed("enter"))
+				this.okBtn.clicked();
+			if(me.input.isKeyPressed("esc")) {
+				this.cancelBtn.clicked();
 				return;
 			}
-			this.cancelBtn.clicked();
-			return;
 		}
 		
 		context.drawImage(this.bgImage, 0, 0);
 		
 		this.parent(context);
 		
-		if(this.popup != undefined && this.popup != null)
+		if(this.popup != null && !this.active)
 			this.popup.draw(context);
 	}
 });

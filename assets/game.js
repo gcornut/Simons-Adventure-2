@@ -47,7 +47,7 @@ var game = {
 		me.state.set(me.state.GAME_END, new game.gui.screen.WinScreen());
 		me.state.set(me.state.GAMEOVER, new game.gui.screen.LooseScreen());
 		
-		me.state.setTransition();
+		//me.state.setTransition();
 		  
 		// add our player entity in the entity pool
 		me.entityPool.add("player1", game.entity.mob.Player);
