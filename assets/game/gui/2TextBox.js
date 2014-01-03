@@ -22,15 +22,15 @@ game.gui.TextBox = game.gui.Component.extend({
 		this.lineSpacing = options.lineSpacing;
 		this.align = options.align.trim().toUpperCase().split(" ").sort();
 		
-		this.fitTextH = options.fitTextH;
-		this.fitTextV = options.fitTextV;
-		
 		this.width = options.width;
 		this.height = options.height;
 		
+		this.fitTextH = options.fitTextH || !this.width;
+		this.fitTextV = options.fitTextV || !this.height;
+		
 		this.textZone = new game.gui.Component({x:0, y:0, width: this.width, height: this.height});
 		
-		this.initText(true);
+		this.initText();
 		
 		this.parent($.extend(options, {width: this.width, height: this.height}));
 		
@@ -45,16 +45,7 @@ game.gui.TextBox = game.gui.Component.extend({
 		}
 	},
 	
-	initText: function(initializing) {
-		if(this.fitTextH != false && this.width == undefined)
-			this.fitTextH = true;
-		else
-			this.fitTextH = false;
-		if(this.fitTextV != false && this.height == undefined)
-			this.fitTextV = true;
-		else
-			this.fitTextV = false;
-			
+	initText: function() {
 		this.lines = this.text.split("\n");
 		
 		this.textWidth = 0;
@@ -75,51 +66,45 @@ game.gui.TextBox = game.gui.Component.extend({
 
 		this.needUpdate = true;
 		
-		if(initializing) {
-			if(this.fitTextH) this.width = this.textWidth;
-			if(this.fitTextV) this.height = this.textHeight;
-		} 
-		else {
-			if(this.fitTextH) this.setWidth(this.textWidth);
-			if(this.fitTextV) this.setHeight(this.textHeight);
-		}
+		if(this.fitTextH) this.setWidth(this.textWidth);
+		if(this.fitTextV) this.setHeight(this.textHeight);
 	},
 	
 	setWidth: function(width) {
 		this.textZone.setWidth(width);
-		if(this.textZone.width != this.textWidth && this.fitTextH) {
+		if(width != this.textWidth && this.fitTextH) {
 			this.fitTextH = false;
 			this.initText();
 		}
 			
 		if(this.frame) {
-			this.frame.setWidth(this.width, true);
+			this.frame.setWidth(width);
 			width = this.frame.width;
 		}
 		this.parent(width);
-		
+		this.needUpdate = true;
 	},
 	
 	setHeight: function(height) {
 		this.textZone.setHeight(height);
-		if(this.textZone.height != this.textHeight && this.fitTextV) {
+		if(height != this.textHeight && this.fitTextV) {
 			this.fitTextV = false;
 			this.initText();
 		}
 
 		if(this.frame) {
-			this.frame.setHeight(this.height, true);
+			this.frame.setHeight(height);
 			height = this.frame.height;
-			this.initText();
 		}
 		this.parent(height);
+		this.needUpdate = true;
 	},
 	
 	setText: function(text, fitTextH, fitTextV) {
 		this.text = text.toUpperCase().trim();
 		
-		if(fitTextH) this.fitTextH = fitTextH;
-		if(fitTextV) this.fitTextV = fitTextV;
+		if(fitTextH != undefined) this.fitTextH = fitTextH;
+		if(fitTextV != undefined) this.fitTextV = fitTextV;
 		this.initText();
 	},
 	
