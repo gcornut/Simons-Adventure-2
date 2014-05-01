@@ -1,3 +1,4 @@
+//@require game.gui.Component
 
 game.gui.TextBox = game.gui.Component.extend({
 	
@@ -50,6 +51,7 @@ game.gui.TextBox = game.gui.Component.extend({
 		
 		this.textWidth = 0;
 		this.lines.map(function(line) {
+			line = line.trim();
 			this.textWidth = Math.max(this.textWidth, line.length * game.gui.font.sSize.x);
 		}, this);
 		

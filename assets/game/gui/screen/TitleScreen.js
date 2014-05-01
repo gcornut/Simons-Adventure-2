@@ -1,3 +1,5 @@
+//@require game.gui.screen.ComplexScreen
+
 game.gui.screen.TitleScreen = game.gui.screen.ComplexScreen.extend({
 	
 	init: function() {

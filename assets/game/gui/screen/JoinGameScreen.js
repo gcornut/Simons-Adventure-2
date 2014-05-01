@@ -1,6 +1,6 @@
 //@require game.gui.screen.ComplexScreen
 
-game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
+game.gui.screen.JoinGameScreen = game.gui.screen.ComplexScreen.extend({
 	
 	init: function() {
 		this.parent();
@@ -49,7 +49,7 @@ game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
 			
 			this.add([
 				new game.gui.TextBox({
-					text: "ENTER THE NAME\n OF YOUR GAME",
+					text: "ENTER THE NAME\nOF THE GAME YOU\nWANT TO JOIN",
 					align: "center"
 				}),
 				
@@ -80,12 +80,8 @@ game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
 		
 		me.input.unbindKey(me.input.KEY.ESC);
 		me.input.unbindKey(me.input.KEY.ENTER);
-		
 		this.input.setText("");
-		
-		game.connection.off("confirm game create");
-		game.connection.off("player2 joined game");
-		
+		game.connection.off("confirm create game");
 		this.parent();
 	},
 

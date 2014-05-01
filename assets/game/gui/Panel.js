@@ -1,3 +1,4 @@
+//@require game.gui.Component
 
 game.gui.Panel = game.gui.Component.extend({
 
@@ -13,6 +14,7 @@ game.gui.Panel = game.gui.Component.extend({
 		
 		this.spacing = options.spacing;
 		this.layout = options.layout;
+		this.buttonSelectionHandler = new game.gui.ButtonSelectionHandler({layout: options.layout});
 		this.components = [];
 		
 		this.parent({
@@ -21,7 +23,6 @@ game.gui.Panel = game.gui.Component.extend({
 			height: options.height,
 			cache: false
 		});
-		
 		
 		this.add(options.components);
 	},
@@ -62,41 +63,58 @@ game.gui.Panel = game.gui.Component.extend({
 		}
 	},
 	
+	adjustComponents: function() {
+		var height, width;
+		if(this.layout === game.gui.Panel.VERTICAL) {
+		    height = 0;
+		    width = this.width;
+		        
+		    this.components.map(function(cmp) {
+		        height += cmp.height + this.spacing;
+		        width = Math.max(cmp.width, width);
+		    }, this);
+		    height -= this.spacing;
+		} 
+		else {
+		    height = this.height;
+		    width = 0;
+		        
+		    this.components.map(function(cmp) {
+		        width += cmp.width + this.spacing;
+		        height = Math.max(cmp.height, height);
+		    }, this);
+		    width -= this.spacing;
+		}
+		
+		if(height != this.height) this.setHeight(height);
+		if(width != this.width) this.setWidth(width);
+		    
+		this.setX(this.pos.x);
+		this.setY(this.pos.y);
+	},
+	
 	add: function(component) {
 		if(component != null && component != undefined) {
+			if(component instanceof Array) {
+				component.map(jQuery.proxy(function(comp) {
+					this.components.push(comp);
+					if(comp instanceof game.gui.Button)
+						this.buttonSelectionHandler.add(comp);
 			
-			if(component instanceof Array)
-				this.components = this.components.concat(component);
-			else this.components.push(component);
+				}, this));
+			} else this.components.push(component);
 			
-			var height, width;
-			if(this.layout === game.gui.Panel.VERTICAL) {
-				height = 0;
-				width = this.width;
-				    
-				this.components.map(function(cmp) {
-				    height += cmp.height + this.spacing;
-				    width = Math.max(cmp.width, width);
-				}, this);
-				height -= this.spacing;
-			} 
-			else {
-				height = this.height;
-				width = 0;
-				    
-				this.components.map(function(cmp) {
-				    width += cmp.width + this.spacing;
-				    height = Math.max(cmp.height, height);
-				}, this);
-				width -= this.spacing;
-			}
-			
-			if(height != this.height) this.setHeight(height);
-			if(width != this.width) this.setWidth(width);
-				
-			this.setX(this.pos.x);
-			this.setY(this.pos.y);
+			this.adjustComponents();	
 		}
+	},
+	
+	remove: function(component) {
+		this.components.remove(component);
+		
+		if(component instanceof game.gui.Button)
+			this.buttonSelectionHandler.remove(component);
+
+		this.adjustComponents();
 	},
 	
 	onResetEvent: function() {
@@ -104,6 +122,7 @@ game.gui.Panel = game.gui.Component.extend({
 			if(cmp != null && cmp != undefined && cmp.onResetEvent != undefined) 
 				cmp.onResetEvent();
 		}, this);
+		this.buttonSelectionHandler.onResetEvent();
 	},
 	
 	onDestroyEvent: function() {
@@ -111,9 +130,11 @@ game.gui.Panel = game.gui.Component.extend({
 			if(cmp != null && cmp != undefined && cmp.onDestroyEvent != undefined) 
 				cmp.onDestroyEvent();
 		}, this);
+		this.buttonSelectionHandler.onDestroyEvent();
 	},
 			
 	draw: function(context) {
+		this.buttonSelectionHandler.update();
 		jQuery.map(this.components, function(cmp) {
 			cmp.draw(context);
 		}, this);

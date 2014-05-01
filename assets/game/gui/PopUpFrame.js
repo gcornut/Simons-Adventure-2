@@ -1,3 +1,5 @@
+//@require game.gui.Component
+
 game.gui.PopUpFrame = game.gui.Component.extend({
 	init: function(text, parentScreen) {
 		this.parent({x: 0, y: 0, width: me.video.getWidth(), height: me.video.getHeight(), cache: false});
@@ -24,7 +26,8 @@ game.gui.PopUpFrame = game.gui.Component.extend({
 	},
 	
 	setText: function(text) {
-		this.textBox.setText(text, true, true);	},
+		this.textBox.setText(text, true, true);
+	},
 	
 	close: function() {
 		me.input.unbindKey(me.input.KEY.ESC);
@@ -39,6 +42,7 @@ game.gui.PopUpFrame = game.gui.Component.extend({
 		var scale = this.animScale.nextStep(),
 			appear = this.animAppear.nextStep();
 		
+		//Draw black background
 		context.globalAlpha = appear;
 		context.fillStyle = 'black';
 		context.fillRect(this.pos.x, this.pos.y, this.width, this.height);
@@ -49,7 +53,10 @@ game.gui.PopUpFrame = game.gui.Component.extend({
 		    posX = (this.width / 2 - width / 2),
 		    posY = (this.height / 2 - height / 2);
 		
-		if(this.textBox.needUpdate) this.textBox.render();
+		//Draw textBox
+		if(this.textBox.needUpdate)
+			this.textBox.render();
+		
 		context.drawImage(this.textBox.cache, posX, posY, width, height);
 		//this.textBox.draw(context);
 	}

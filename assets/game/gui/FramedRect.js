@@ -1,6 +1,11 @@
+//@require game.gui.Component
+
+/**
+ * Textured frame used as a border for GUI Components
+ */
 game.gui.FramedRect = game.gui.Component.extend({
 	/**
-	 * parentRect: the Rect around which the TexturedFrame will be drawn	
+	 * parentRect:	the Rect around which the TexturedFrame should be drawn
 	 */
 	init: function(parentRect, options) {
 		var defaults = {
@@ -12,12 +17,12 @@ game.gui.FramedRect = game.gui.Component.extend({
 		this.parts = ["tr", "tl", "br", "bl", "ht", "hb", "vr", "vl"];
 		
 		this.sprites = {};
-		for(var i = 0; i < this.parts.length; i++) {
-			var part = this.parts[i];
+		
+		jQuery.map(this.parts, function(part) {
 			var region = game.guiTexture.getRegion(part+".png");
 			this.sprites[part] = new me.SpriteObject(0,0, game.guiTexture.getTexture(), region.width, region.height);
 			this.sprites[part].offset.setV(region.offset);
-		}
+		}, this);
 		
 		this.padding = {
 			top: this.sprites["tr"].height,
@@ -114,49 +119,44 @@ game.gui.FramedRect = game.gui.Component.extend({
 				var topRight = this.sprites["tr"];
 				
 				if(this.bgImage != undefined && this.bgImage != null)
-				    ctx.fillStyle = ctx.createPattern(this.bgImage, 'repeat');
+					ctx.fillStyle = ctx.createPattern(this.bgImage, 'repeat');
 				else
-				    ctx.fillStyle = this.bgColor;
+					ctx.fillStyle = this.bgColor;
 				
 				ctx.fillRect(
-				    topRight.pos.x + (topRight.width / 2),
-				    topRight.pos.y + (topRight.height / 2),
-				    this.width - (topRight.width),
-				    this.height - (this.sprites["tr"].height)
+					topRight.pos.x + (topRight.width / 2),
+					topRight.pos.y + (topRight.height / 2),
+					this.width - (topRight.width),
+					this.height - (this.sprites["tr"].height)
 				);
 				
-				for(var i = 0; i < this.parts.length; i++) {
-				    var part = this.parts[i];
-				    
-				    if(part.indexOf("t") === 0 || part.indexOf("b") === 0)
-				    	this.sprites[part].draw(ctx);
-				    else {
-				    	if(part.indexOf("h") === 0) {
-				    		var startX = this.sprites["tr"].pos.x + this.sprites["tr"].width;
-				    		var stopX = this.sprites["tl"].pos.x - 1;
-				    		
-				    		for(var x = startX; x <= stopX; x++) {
-				    			this.sprites[part].pos = new me.Vector2d(
-				    				x,
-				    				(part === "ht") ? 0 : this.sprites["br"].pos.y
-				    			);
-				    			this.sprites[part].draw(ctx);
-				    		}
-				    	}
-				    	else {
-				    		var startY = this.sprites["tr"].pos.y + this.sprites["tr"].height;
-				    		var stopY = this.sprites["br"].pos.y - 1;
-				    		
-				    		for(var y = startY; y <= stopY; y++) {
-				    			this.sprites[part].pos = new me.Vector2d(
-				    				(part === "vr") ? 0 : this.sprites["bl"].pos.x,
-				    				y
-				    			);
-				    			this.sprites[part].draw(ctx);
-				    		}
-				    	}
-				    }
-				}
+				jQuery.map(this.parts, function(part) {
+					if(part.indexOf("t") === 0 || part.indexOf("b") === 0)
+						this.sprites[part].draw(ctx);
+					else {
+						ctx.fillStyle = ctx.createPattern(game.gui.getImageFromSprite(part, this.sprites[part]), 'repeat');
+						
+						var x, y,
+							width, height;
+						
+						if(part.indexOf("h") === 0) {
+							x = this.sprites["tr"].width;
+							width = this.sprites["tl"].pos.x - x;
+							
+							y = part === "ht" ? 0 : this.sprites["br"].pos.y;
+							height = this.sprites[part].height;
+						}
+						else {
+							y = this.sprites["tr"].height;
+							height = this.sprites["br"].pos.y - y;
+							
+							x = part === "vr" ? 0 : this.sprites["tl"].pos.x;
+							width = this.sprites[part].width;
+						}
+						
+						ctx.fillRect(x, y, width, height);
+					}
+				}, this);
 			},
 			this
 		);

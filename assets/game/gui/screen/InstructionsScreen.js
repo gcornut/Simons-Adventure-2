@@ -1,3 +1,5 @@
+//@require game.gui.screen.ComplexScreen
+
 game.gui.screen.InstructionsScreen = game.gui.screen.ComplexScreen.extend({
 	
 	init: function() {
@@ -16,8 +18,7 @@ game.gui.screen.InstructionsScreen = game.gui.screen.ComplexScreen.extend({
 				new game.gui.TextBox({
 					text: "instructions", 
 					align: "center middle",
-					width: 520,
-					frame: true
+					height: 48
 				}),
 				
 				new game.gui.TextBox({
@@ -25,7 +26,7 @@ game.gui.screen.InstructionsScreen = game.gui.screen.ComplexScreen.extend({
 				    		"arrows: move\n"+ 
 				    		"space:  shoot",
 				    width: 520, 
-				    height: 320,
+				    height: 280,
 				    frame: true
 				}),
 				

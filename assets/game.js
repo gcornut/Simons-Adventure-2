@@ -1,10 +1,9 @@
-
 var game = {
 	onload : function () {
 		//me.sys.fps = 30;
 	
 		// Initialize the video.
-		if (!me.video.init("screen", 640, 480, true, 'auto')) {
+		if (!me.video.init("screen", 640, 480, true, 1)) {
 			alert("Your browser does not support HTML5 canvas.");
 			return;
 		}
@@ -31,7 +30,6 @@ var game = {
 
 	// Run on game resources loaded.
 	loaded : function () {
-	
 		me.state.MENU_NEWGAME = me.state.USER + 0;
 		me.state.MENU_JOINGAME = me.state.USER + 1;
 		me.state.MENU_INSTRUCTIONS = me.state.USER + 2;
@@ -39,15 +37,11 @@ var game = {
 		// add screens
 		me.state.set(me.state.MENU, new game.gui.screen.TitleScreen());
 		me.state.set(me.state.MENU_NEWGAME, new game.gui.screen.NewGameScreen());
-		me.state.set(me.state.MENU_JOINGAME, new game.gui.screen.TitleScreen());
+		me.state.set(me.state.MENU_JOINGAME, new game.gui.screen.JoinGameScreen());
 		me.state.set(me.state.MENU_INSTRUCTIONS, new game.gui.screen.InstructionsScreen());
-		
 		me.state.set(me.state.PLAY, new game.gui.screen.PlayScreen());
-		
 		me.state.set(me.state.GAME_END, new game.gui.screen.WinScreen());
 		me.state.set(me.state.GAMEOVER, new game.gui.screen.LooseScreen());
-		
-		//me.state.setTransition();
 		  
 		// add our player entity in the entity pool
 		me.entityPool.add("player1", game.entity.mob.Player);
@@ -55,12 +49,6 @@ var game = {
 		me.entityPool.add("compagny", game.entity.mob.EvilCompagny);
 		me.entityPool.add("coin", game.entity.accessory.Coin);
 		me.entityPool.add("winEntity", game.entity.WinEntity);
-				  
-		// enable the keyboard
-		me.input.bindKey(me.input.KEY.LEFT,  "left");
-		me.input.bindKey(me.input.KEY.RIGHT, "right");
-		me.input.bindKey(me.input.KEY.UP,	"jump", false);
-		me.input.bindKey(me.input.KEY.SPACE, "shoot", true);
 		
 		// set a global fading transition for the screen
 		me.state.transition("fade", "#000000", 250);
@@ -70,7 +58,6 @@ var game = {
 		
 		//Load gui texture file
 		game.guiTexture = new me.TextureAtlas(me.loader.getJSON("gui"), me.loader.getImage("gui"));
-		
 		game.gui.font = new me.BitmapFont("32x32_font", 32);
 		
 		// start the game on menu
@@ -101,10 +88,20 @@ var game = {
 					var sprite = new me.SpriteObject(0,0, game.guiTexture.getTexture(), region.width, region.height);
 					sprite.offset.setV(region.offset);
 					
+					return this.getImageFromSprite(regionName, sprite);
+				}
+				return undefined;
+			}
+		},
+		getImageFromSprite: function(regionName, sprite) {
+			if(this.images[regionName])
+				return this.images[regionName];
+			else {
+				if(sprite) {
 					var tmpCanvas = document.createElement("canvas"),
 						context = tmpCanvas.getContext("2d");
-					tmpCanvas.height = region.height;
-					tmpCanvas.width = region.width;
+					tmpCanvas.height = sprite.height;
+					tmpCanvas.width = sprite.width;
 					
 					sprite.draw(context);
 					
@@ -135,7 +132,7 @@ var game = {
 					    this.remote = object;
 					});
 					con.on("confirm connect", function(object) {
-					    console.log('Socket connection openend [id:' + object.id + ']');
+					    console.log('Socket connection opened [id:' + object.id + ']');
 					});
 				};
 				//this.socket.onerror; //Stuff to do when error occurs
