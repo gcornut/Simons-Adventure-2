@@ -8,7 +8,7 @@ game.gui.screen.JoinGameScreen = game.gui.screen.ComplexScreen.extend({
 		this.bgImage = null;
 		this.cancelBtn = null;
 		this.okBtn = null;
-		this.input = null;
+		this.scrollPanel = null;
 		
 		this.popup = null;
 		
@@ -16,27 +16,7 @@ game.gui.screen.JoinGameScreen = game.gui.screen.ComplexScreen.extend({
 	},
 	
 	validate: function() {
-		if(game.connection.isClosed()) game.connection.init();
-		if(this.input.text != "") {
-			if(game.connection.sendJSON({name: this.input.text}, "create game")) {
-				
-				this.popup = new game.gui.PopUpFrame("creating game", this);
-				
-				game.connection.on("confirm game create", jQuery.proxy(function(confirm) {
-					if(confirm.ok) {
-						this.popup.setText("waiting for\n player 2");
-						
-						game.connection.on("player2 joined game", jQuery.proxy(function() {
-							this.popup.setText("player 2 joined\n the game");
-							setTimeout(function() {
-								me.state.change(me.state.PLAY);
-							}, 2000);
-						}, this));
-					}
-					else this.popup.setText("name allready\nin use");
-				}, this));
-			}
-		}
+		
 	},
 
 	onResetEvent: function() {
@@ -49,20 +29,17 @@ game.gui.screen.JoinGameScreen = game.gui.screen.ComplexScreen.extend({
 			
 			this.add([
 				new game.gui.TextBox({
-					text: "ENTER THE NAME\nOF THE GAME YOU\nWANT TO JOIN",
+					text: "CHOOSE A GAME",
 					align: "center"
 				}),
 				
-				this.input = new game.gui.InputText({
-					maxTextLength: 14,
-				}),
+				this.scrollPanel = new game.gui.ScrollPanel({}),
 				
 				new game.gui.Panel({
 					width: 410,
 					spacing: 30,
 					components: [
-						this.cancelBtn = new game.gui.Button({text: "cancel", action: me.state.MENU, width: 190}), 
-						this.okBtn = new game.gui.Button({text: "ok", action: jQuery.proxy(this.validate, this), width: 190})
+						this.cancelBtn = new game.gui.Button({text: "cancel", action: me.state.MENU, width: 190}),
 					],
 					layout: game.gui.Panel.HORIZONTAL
 				})
@@ -72,23 +49,17 @@ game.gui.screen.JoinGameScreen = game.gui.screen.ComplexScreen.extend({
 		
 		this.parent();
 		me.input.bindKey(me.input.KEY.ESC, "esc", true);
-		me.input.bindKey(me.input.KEY.ENTER, "enter", true);
 	},
 
 	onDestroyEvent: function() {
 		this.active = false;
 		
 		me.input.unbindKey(me.input.KEY.ESC);
-		me.input.unbindKey(me.input.KEY.ENTER);
-		this.input.setText("");
-		game.connection.off("confirm create game");
 		this.parent();
 	},
 
 	draw: function(context) {
 		if(this.active) {
-			if(me.input.isKeyPressed("enter"))
-				this.okBtn.clicked();
 			if(me.input.isKeyPressed("esc")) {
 				this.cancelBtn.clicked();
 				return;
@@ -100,6 +71,6 @@ game.gui.screen.JoinGameScreen = game.gui.screen.ComplexScreen.extend({
 		this.parent(context);
 		
 		if(this.popup != null && !this.active)
-			this.popup.draw(context);
+		    this.popup.draw(context);
 	}
 });

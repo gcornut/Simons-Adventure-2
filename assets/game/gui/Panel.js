@@ -96,12 +96,13 @@ game.gui.Panel = game.gui.Component.extend({
 	add: function(component) {
 		if(component != null && component != undefined) {
 			if(component instanceof Array) {
-				component.map(jQuery.proxy(function(comp) {
-					this.components.push(comp);
+				var panel = this;
+				component.map(function(comp) {
+					panel.components.push(comp);
 					if(comp instanceof game.gui.Button)
-						this.buttonSelectionHandler.add(comp);
+						panel.buttonSelectionHandler.add(comp);
 			
-				}, this));
+				});
 			} else this.components.push(component);
 			
 			this.adjustComponents();	

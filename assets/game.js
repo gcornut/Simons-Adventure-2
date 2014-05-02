@@ -148,17 +148,17 @@ var game = {
 					
 					if(json) {
 						if(onHandlers[json.type] != undefined)
-							onHandlers[json.type](json);
+							onHandlers[json.type](json.content);
 					}
 				}
 				
 				this.socket.onclose = function(e) {
 					console.log("Socket connection closed");
 				}
+				
+				return true;
 			}
-			else {
-				//TODO: Warn the user that his navigator is not compatible
-			}
+			else return false;
 		},
 		
 		on: function(type, callback) {
@@ -172,11 +172,9 @@ var game = {
 		
 		sendJSON: function(object, type) {
 			if(this.isOpened() && this.socket != undefined) {
-				if(type != undefined) {
-					object.type = type;
-				}
-				this.socket.send(JSON.stringify(object));
-				console.log(object);
+				var message = JSON.stringify({type: type, content: object});
+				this.socket.send(message);
+				//console.log(message);
 				return true;
 			}
 			else return false;

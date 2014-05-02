@@ -16,26 +16,45 @@ game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
 	},
 	
 	validate: function() {
-		if(game.connection.isClosed()) game.connection.init();
-		if(this.input.text != "") {
-			if(game.connection.sendJSON({name: this.input.text}, "create game")) {
-				
-				this.popup = new game.gui.PopUpFrame("creating game", this);
-				
-				game.connection.on("confirm game create", jQuery.proxy(function(confirm) {
-					if(confirm.ok) {
-						this.popup.setText("waiting for\n player 2");
-						
-						game.connection.on("player2 joined game", jQuery.proxy(function() {
-							this.popup.setText("player 2 joined\n the game");
-							setTimeout(function() {
-								me.state.change(me.state.PLAY);
-							}, 2000);
-						}, this));
-					}
-					else this.popup.setText("name allready\nin use");
-				}, this));
-			}
+		if(this.input.text != "") {	
+			var screen = this;
+			
+			//Initialize popup
+			this.popup = new (game.gui.PopUpFrame.extend({
+			    init: function() {
+			    	this.parent("creating game", screen);
+			    	
+			    	var popup = this;
+			    	
+			    	if(game.connection.isClosed() && !game.connection.init())
+			    		popup.setText("your browser is \n incompatible");
+			    	else if(game.connection.sendJSON({name: screen.input.text}, "create game")) {
+			
+			    		game.connection.on("confirm game create", function(confirm) {
+			                if(confirm.ok) {
+			                	popup.setText("waiting for\n player 2");
+			                	
+			                	game.connection.on("player joined game", function() {
+			                		popup.setText("player 2 joined\n the game");
+			                		
+			                		setTimeout(function() {
+			                			me.state.change(me.state.PLAY);
+			                		}, 2000);
+			                	});
+			                }
+			                else popup.setText("name allready \n in use");
+			            });
+			        }
+			    },
+			    
+			    close: function() {
+			   		game.connection.sendJSON({}, "leave game");
+			    	this.parent();
+			    }
+			}))();
+			
+			console.log(this.popup);
+			
 		}
 	},
 
@@ -84,7 +103,7 @@ game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
 		this.input.setText("");
 		
 		game.connection.off("confirm game create");
-		game.connection.off("player2 joined game");
+		game.connection.off("player joined game");
 		
 		this.parent();
 	},

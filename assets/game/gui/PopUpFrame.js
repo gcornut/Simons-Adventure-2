@@ -8,7 +8,7 @@ game.gui.PopUpFrame = game.gui.Component.extend({
 			text: text, 
 			align: "center middle", 
 			frame: true, 
-			fitTextH: true, 
+			fitTextH: true,
 			fitTextV: true,
 			centeredH: true,
 			centeredV: true
