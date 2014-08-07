@@ -170,11 +170,11 @@ var game = {
 				delete this.onHandlers[type];	
 		},
 		
-		sendJSON: function(object, type) {
+		sendMsg: function(type, object) {
 			if(this.isOpened() && this.socket != undefined) {
 				var message = JSON.stringify({type: type, content: object});
 				this.socket.send(message);
-				//console.log(message);
+				console.log(message);
 				return true;
 			}
 			else return false;

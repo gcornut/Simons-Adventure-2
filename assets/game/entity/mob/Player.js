@@ -162,14 +162,14 @@ game.entity.mob.Player = me.ObjectEntity.extend({
 		
 		var pixelAccuracy = 5;
 		if(
-			Math.floor(this.pos.x/5) != Math.floor(this.changes.pos.x/5)
-		    || Math.floor(this.pos.y/5) != Math.floor(this.changes.pos.y/5)
+			Math.floor(this.pos.x/pixelAccuracy) != Math.floor(this.changes.pos.x/pixelAccuracy)
+		    || Math.floor(this.pos.y/pixelAccuracy) != Math.floor(this.changes.pos.y/pixelAccuracy)
 		    || lastChanges.animation != this.changes.animation
 		) {
 			this.changes.moved = true;
 			this.changes.pos = this.pos;
 			
-			game.connection.sendJSON(this.changes, "action");
+			game.connection.sendMsg("action", this.changes);
 		}
 		
 		// update animation if necessary

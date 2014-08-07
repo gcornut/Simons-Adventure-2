@@ -41,6 +41,7 @@ game.gui.Button = game.gui.TextBox.extend({
 			
 			if(this.selectionHandler && selected != this.selected && selected) {
 				this.selectionHandler.select(this);
+				this.selectAnim.reset();
 			}
 			
 			if(selected) this.frame.setBgImage(this.bgImages["on"]);

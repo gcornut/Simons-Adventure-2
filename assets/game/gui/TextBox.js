@@ -19,7 +19,11 @@ game.gui.TextBox = game.gui.Component.extend({
 			},
 			options = $.extend(defaults, (options || {}));
 			
-		this.text = options.text.toUpperCase().trim();
+		this.formatText = function(txt) {
+			return txt.toUpperCase().trim().replace(/\s*(\n)\s*/, "$1");
+		}
+		
+		this.text = this.formatText(options.text);
 		this.lineSpacing = options.lineSpacing;
 		this.align = options.align.trim().toUpperCase().split(" ").sort();
 		
@@ -51,7 +55,6 @@ game.gui.TextBox = game.gui.Component.extend({
 		
 		this.textWidth = 0;
 		this.lines.map(function(line) {
-			line = line.trim();
 			this.textWidth = Math.max(this.textWidth, line.length * game.gui.font.sSize.x);
 		}, this);
 		
@@ -103,7 +106,7 @@ game.gui.TextBox = game.gui.Component.extend({
 	},
 	
 	setText: function(text, fitTextH, fitTextV) {
-		this.text = text.toUpperCase().trim();
+		this.text = this.formatText(text);
 		
 		if(fitTextH != undefined) this.fitTextH = fitTextH;
 		if(fitTextV != undefined) this.fitTextV = fitTextV;

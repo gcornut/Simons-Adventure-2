@@ -16,26 +16,26 @@ game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
 	},
 	
 	validate: function() {
-		if(this.input.text != "") {	
+		if(this.input.text != "") {
+			var text = this.input.text;
 			var screen = this;
 			
 			//Initialize popup
 			this.popup = new (game.gui.PopUpFrame.extend({
 			    init: function() {
-			    	this.parent("creating game", screen);
-			    	
+			        this.parent("creating game", screen);
 			    	var popup = this;
 			    	
 			    	if(game.connection.isClosed() && !game.connection.init())
 			    		popup.setText("your browser is \n incompatible");
-			    	else if(game.connection.sendJSON({name: screen.input.text}, "create game")) {
+			    	else if(game.connection.sendMsg("create game", {name: text})) {
 			
 			    		game.connection.on("confirm game create", function(confirm) {
 			                if(confirm.ok) {
-			                	popup.setText("waiting for\n player 2");
+			                	popup.setText("waiting for \n player 2");
 			                	
 			                	game.connection.on("player joined game", function() {
-			                		popup.setText("player 2 joined\n the game");
+			                		popup.setText("player 2 joined \n the game");
 			                		
 			                		setTimeout(function() {
 			                			me.state.change(me.state.PLAY);
@@ -48,13 +48,10 @@ game.gui.screen.NewGameScreen = game.gui.screen.ComplexScreen.extend({
 			    },
 			    
 			    close: function() {
-			   		game.connection.sendJSON({}, "leave game");
+			   		game.connection.sendMsg("leave game");
 			    	this.parent();
 			    }
 			}))();
-			
-			console.log(this.popup);
-			
 		}
 	},
 

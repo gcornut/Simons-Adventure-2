@@ -83,6 +83,7 @@ module.exports = function(path, folders, compressJS) {
 	//libs.js	
 	defaultPacker(
 		[
+			//path.join(folders.assets, "lib", "peer.min.js"),
 			path.join(folders.assets, "lib", "jquery-1.10.2.min.js"),
 			path.join(folders.assets, "lib", "jquery.easing.min.js"),
 			path.join(folders.assets, "lib", "custom.jquery.lo-dash-map.js"),
@@ -101,7 +102,6 @@ module.exports = function(path, folders, compressJS) {
 		];
 		
 		var jsFiles = libs.concat(gameRessources);
-		console.log(jsFiles);
 		//console.log(jsFiles);
 		defaultPacker(
 			jsFiles, 

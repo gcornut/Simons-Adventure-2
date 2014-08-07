@@ -1,231 +1,277 @@
-function HashMap() {
-    var obj = [];
-    function find(key){
-    	var i = obj.length;
-    	while (i--) {
-    		var curr = obj[i];
-    		if (curr[0] === key) {
-    			return i;
-    		}
-    	}
-    	return null;
-    }
-    var d = function dictionary(key, value) {
-    		var index = find(key);
-    		if (value) {
-    			if (index != null){
-    				obj.splice(index, 1);
-    			}
-    			obj.push([key, value]);
- 			
-    		} else {
-    			if (index != null){
-    				return obj[index][1];
-    			}
-    		}
-    }
-    d.size = function(){
-    	return obj.length;
-    }
-    d.delete = function(key) {
-    	obj.splice(find(key), 1);
-    }
-    d.each = function(func){
-    	for (var i = 0; i<obj.length; i++){
-    		var item = obj[i]
-    		func(item[0], item[1]); 
-    	}
-    }
-    return d;
-}
-
-function GameList() {
-    var list = new HashMap();
-    var callbacks = new HashMap();
-    
-    var g =  function() {}
-    g.get = function(name) {
-    	return list(name);
-    }
-    g.add = function(game) {
-    	list(game.name, game);
-    	
-    	callbacks.each(function(o, callback) {
-    		callback()
-    	});
-    }
-    g.remove = function(game) {
-    	list.delete(game.name);
-    	callbacks.each(function(o, callback) {
-    		callback()
-    	});
-    }
-    g.addObserver = function(observer) {
-    	var callback = function() {
-    		var games = [];
-    		list.each(function(name, game){
-    			games.push(game);
-    		});
-    	
-    		observer.sendJSON(games, 'game list');
-    	};
-    	callbacks(observer, callback);
-    	callback();
-    }
-    g.removeObserver = function(observer) {
-    	callbacks.delete(observer);	
-    }
-    return g;
-}
-
-	/*
-	var games = new GameList();
-	games.addObserver({sendJSON: function(list){console.log("changed "); console.log(list)}});
-	games.add({name: "TOTO"});
-	games.add({name: "TOTO2"});
-	games.add({name: "TOTO3"});*/
-	/*
-	game.connection.init();
-	game.connection.sendJSON({}, "subscribe list game");
-	game.connection.on("game list", function(list){console.log(list)});
-	game.connection.sendJSON({name: "TOTO"}, "create game");
-	*/
-	
 //Simon's adventure websocket server impl
 module.exports = function(httpServ) {
-	//Authorizes or not the connections based on origin
-	var authorizedOrigin = function(origin) {
-		return true;
+
+	function Map() {
+		var obj = [];
+		function find(key){
+			var i = obj.length;
+			while (i--) {
+				var curr = obj[i];
+				if (curr[0] === key) {
+					return i;
+				}
+			}
+			return null;
+		}
+		var self = function dictionary(key, value) {
+				var index = find(key);
+				if (value) {
+					if (index != null){
+						obj.splice(index, 1);
+					}
+					obj.push([key, value]);
+	 			
+				} else {
+					if (index != null){
+						return obj[index][1];
+					}
+				}
+		}
+		self.size = function(){
+			return obj.length;
+		}
+		self.delete = function(key) {
+			obj.splice(find(key), 1);
+		}
+		self.each = function(func){
+			for (var i = 0; i<obj.length; i++){
+				var item = obj[i]
+				var r = func(item[0], item[1]);
+				if(r === false) break; 
+			}
+		}
+		self.keys = function() {
+			var keys = [];
+			this.each(function(k, v) {
+				keys.push(k);
+			});
+			return keys;
+		}
+		return self;
 	}
 	
-	var connections = {};
+	function GameList() {
+		var games = new Map();
+		var callbacks = new Map();
+		
+		var self =  function() {}
+		self.get = function(name) {
+			return games(name);
+		}
+		self.new = function(name) {
+			var game = new Game(name, this);
+			games(name, game);
+			callbacks.each(function(o, callback) {
+				callback()
+			});
+			
+			console.log('[GAME CREATED] name: ' + game.getName());
+			return game;
+		}
+		self.remove = function(game) {
+			game.destroy();
+			games.delete(game.name);
+			callbacks.each(function(o, callback) {
+				callback()
+			});
+			
+			console.log('[GAME DELETED] name: ' + game.getName());
+		}
+		self.addObserver = function(observer) {
+			var callback = function() {
+		  		observer.sendMsg('game list', games.keys());
+			};
+			callbacks(observer, callback);
+			callback();
+			
+			console.log("[SUBSCRIPTION] player: " + observer.ID);
+		}
+		self.removeObserver = function(observer) {
+			callbacks.delete(observer);
+			
+			console.log("[UN-SUBSCRIPTION] player: " + observer.ID);
+		}
+		return self;
+	}
 	
-	var games = new GameList();
+	function Game(n, gl) {
+		var self = function() {}
+		var gameList = gl;
+		var master = null;
+		var players = [];
+		self.getName = function() {
+			return n;	
+		}
+		self.addPlayer = function(player) {
+			if(master === null)
+				master = player;
+			
+			players.forEach(function(p) {
+				p.sendMsg('player joined game', {id: player.ID});
+			});
+			players.push(player);
+			console.log("[GAME JOINED] game: " + this.getName() + ", " + (master === player ? "master" : "player") + ": " + player.ID);
+		}
+		self.removePlayer = function(player) {
+			console.log("[GAME LEAVED] game: " + this.getName() + ", player: " + player.ID);
+			
+			if(player === master) {
+				this.destroy();
+				gameList.remove(this);
+			} else {
+				players.splice(players.indexOf(player), 1);
+				players.forEach(function(p) {
+					p.sendMsg('player left game', {id: player.ID});
+				});
+			}
+		}
+		self.destroy = function() {
+			players.forEach(function(p) {
+				p.sendMsg('game deleted');
+			});
+		}
+		return self;
+	}
 	
-	var lastConnectionID = 0;
-	
-	var WebSocketServer = require('websocket').server;
-	
-	var ws = new WebSocketServer({
-		httpServer: httpServ,
-		autoAcceptConnections: false
-	});
-	
-	ws.on("request", function(con) {
-		if(!authorizedOrigin(con.origin)) {
-			request.reject();
-			return;
+	function PlayerList() {
+		var players = new Map();
+		var lastConnectionID = 0;
+		
+		var self = function() {}
+		self.new = function(connection) {
+			var ID = lastConnectionID++;
+
+			var player = new Player(connection, ID); 
+			player.sendMsg('confirm connect', {id: player.ID});
+			players(ID, player);
+			
+			console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' [' + player.ID + '] connected.');
+			
+			// On player connection close
+			connection.on('close', function(reasonCode, description) {
+				player.leaveGame();
+				players.delete(player.ID);
+				console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' [' + player.ID + '] disconnected.');
+			});
+					
+			return player;
 		}
 		
-		//Accept connection
-		var connection = con.accept('echo-protocol', con.origin);
-		connections[++lastConnectionID] = connection;
-		connection.ID = lastConnectionID;
-		connection.sendJSON = function(object, type) {
-			var message = JSON.stringify({type: type, content: object});
-			connection.send(message);
-			//console.log(message);
-		}
-		console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' [' + connection.ID + '] connected.');
-		connection.sendJSON({id: connection.ID}, 'confirm connect');
+		return self;
+	}
+	
+	function Player(c, i) {
+		var self = function(c) {}
+		self.connection = c;
+		self.ID = i;
 		
-		//On message
+		var game = null;
 		var onHandlers = {};
-		connection.onMsg = function(type, callback) {
-			onHandlers[type] = callback;
-		}
-		connection.offMsg = function(type, callback) {
-			if(onHandlers[type] != undefined)
-				delete onHandlers[type];
-		}
-		connection.on('message', function(message) {
+		
+		// On message
+		self.connection.on('message', function(message) {
 			if(message.type === 'utf8') {
 				var json;
 				
 				try {
 					json = JSON.parse(message.utf8Data);	
-				}
-				catch(e) {}
+				} catch(e) {}
 				
-				if(json) {
-					if(onHandlers[json.type] != undefined)
-						onHandlers[json.type](json.content);
-				}
+				if(json && onHandlers[json.type] != undefined)
+					onHandlers[json.type](json.content);
 			}
 		});
 		
-		connection.onMsg('create game', function(object) {
-			var ok = false;
+		self.joinGame = function(g) {
+			game = g;
+			game.addPlayer(this);
+		}
+		
+		self.leaveGame = function() {
+			if(game != null) {
+				game.removePlayer(this);
+				game = null;
+			}
+		}
+		
+		self.sendMsg = function(type, object) {
+			var message = JSON.stringify({type: type, content: object});
+			this.connection.send(message);
+		}
+		
+		self.onMsg = function(type, callback) {
+			onHandlers[type] = callback;
+		}
+		
+		self.offMsg = function(type, callback) {
+			if(onHandlers[type] != undefined)
+				delete onHandlers[type];
+		}
+		
+		return self;
+	}
+	
+	//Authorizes or not the connections based on origin
+	var authorizedOrigin = function(origin) {
+		return true;
+	}
+
+	// Global list of all player connected
+	var players = new PlayerList();
+	
+	// Global list of all game created and active
+	var games = new GameList();
+	
+	// Init WebSocket server
+	var ws = new (require('websocket').server)({
+		httpServer: httpServ,
+		autoAcceptConnections: false
+	});
+	
+	// New connection to WebSocket server
+	ws.on("request", function(con) {
+		// Filter connection
+		if(!authorizedOrigin(con.origin)) {
+			request.reject();
+			return;
+		}
+		
+		// Accept connection & Add player to global list
+		var player = players.new(con.accept('echo-protocol', con.origin));
+		
+		// Create game
+		player.onMsg('create game', function(object) {
+			if(ok = (games.get(object.name) === undefined))
+				player.joinGame(games.new(object.name));
 			
-			if(games.get(object.name) == undefined) {
-					var game = {
-						name: object.name,
-						player1: connection.ID,
-						player2: undefined
-					};
-					games.add(game); 
-					connection.game = game;
-					console.log(
-						'['+connection.ID+'] '+
-						'created game named : '+
-						object.name
-					);
-					
-					ok = true;
-			}
+			player.sendMsg('confirm game create', {"ok": ok});
+		});
+		
+		// Join game
+		player.onMsg('join game', function(object) {
+			if(ok = ((game = games.get(object.name)) != undefined))
+				player.joinGame(game);
 			
-			//Confirm
-			connection.sendJSON({"ok": ok}, 'confirm game create');
-		});
-		connection.onMsg('join game', function(object) {
-			var ok = false;
-						
-			if((game = games.get(object.name)) != undefined) {
-					game.player2 = connection.ID;
-					connection.game = game;
-					console.log(
-						'['+connection.ID+']'+
-						'joined game named : '+
-						object.name
-					);
-					
-					ok = true;
-					connections[game.player1].sendJSON({}, 'player joined game');
-			}
-			
-			//Confirm
-			connection.sendJSON({"ok": ok}, 'confirm game join');	
-		});
-		connection.onMsg('leave game', function() {
-			if(connection.game) {
-				var recipient = undefined;
-				if(connection.game.player1 == connection.ID) {
-					recipient = connection.game.player2;
-				}
-				else if(connection.game.player2 == connection.ID) {
-					recipient = connection.game.player1;
-				}
-				
-				if(recipient) {
-					connections[recipient].sendJSON({}, 'player left game');
-				} else {
-					games.remove(connection.game);
-				}
-				
-				connection.game = undefined;
-			}
+			player.sendMsg('confirm game join', {"ok": ok});	
 		});
 		
-		connection.onMsg('subscribe list game', function() {
-			console.log("["+connection.ID+"] subsrcibed to the list of games");
-			games.addObserver(connection);
+		// Leave game
+		player.onMsg('leave game', function() {
+			player.leaveGame();
 		});
 		
-		connection.onMsg('unsubscribe list game', function() {
-			games.removeObserver(connection);
+		// Subscribe list game
+		player.onMsg('subscribe list game', function() {
+			games.addObserver(player);
 		});
 		
-		connection.onMsg('action', function(object) {
+		// Unsubscribe list game
+		player.onMsg('unsubscribe list game', function() {
+			games.removeObserver(player);
+		});
+		
+		/*// Player action
+		player.onMsg('action', function(object) {
 			if(connection.game) {
 				var recipient = undefined;
 				if(connection.game.player1 == connection.ID) {
@@ -236,25 +282,12 @@ module.exports = function(httpServ) {
 				}
 				
 				if(recipient != undefined)
-					connections[recipient].sendJSON(object, 'action');
+					connections[recipient].sendMsg(object, 'action');
 				else
-					connection.sendJSON({}, "error player disconnected");
+					connection.sendMsg({}, "error player disconnected");
 			}
-		});
+		});*/
 		
-		//On close
-		connection.on('close', function(reasonCode, description) {
-			if(connection.game) {
-				if(connection.game.player1 == connection.ID)
-					connection.game.player1 = undefined;
-				else if(connection.game.player2 == connection.ID)
-					connection.game.player2 = undefined;
-					
-				if(connection.game.player2 == undefined && connection.game.player2 == undefined)
-					games.remove(connection.gam);
-			}
-			delete connections[connection.ID];
-			console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' [' + connection.ID + '] disconnected.');
-		});
+		
 	});
 }
