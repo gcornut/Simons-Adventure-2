@@ -7,11 +7,8 @@ module.exports = function(app, path, folders) {
 	    	|| name.trim().match(/error/) != null
 	    	|| name.trim().match(/\/\-.*$/) != null
 	    	|| name.trim().match(/\.psd$/) != null
+	    	|| name.trim().match(/\.sbx$/) != null
 	    );
-	}
-	
-	var removeJSext = function(file) {
-		return file.replace(/\.js$/, "");
 	}
 	
 	app.use(require('connect-cache-manifest')({
@@ -20,12 +17,23 @@ module.exports = function(app, path, folders) {
 	    	file: path.join(folders.public, 'favicon.ico'),
 	    	path: "/favicon.ico"
 	    }, {
+	    	file: path.join(folders.public, 'index.css'),
+	    	path: "/index.css"
+	    }, {
 	    	dir: path.join(folders.public, 'js'),
 	    	prefix: "/js/",
 	    	ignore: fileIgnore
 	    }, {
-	    	dir: path.join(folders.public, 'data'),
-	    	prefix: "/data/",
+	    	dir: path.join(folders.public, 'img'),
+	    	prefix: "/img/",
+	    	ignore: fileIgnore
+	    }, {
+	    	dir: path.join(folders.public, 'map'),
+	    	prefix: "/map/",
+	    	ignore: fileIgnore
+	    }, {
+	    	dir: path.join(folders.public, 'sfx'),
+	    	prefix: "/sfx/",
 	    	ignore: fileIgnore
 	    }/*, {
 	    	file: path.join(folders.views, "index.ejs"),
