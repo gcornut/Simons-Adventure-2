@@ -14,8 +14,6 @@ game.gui.screen.LooseScreen = me.ScreenObject.extend({
         
 	    	this.font = new me.BitmapFont("32x32_font", 32); 
     	}
-    
-        me.audio.playTrack("bg_loose");
         
         // enable the keyboard
         me.input.bindKey(me.input.KEY.ENTER, "enter", true); 

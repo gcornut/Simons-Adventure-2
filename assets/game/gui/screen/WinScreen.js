@@ -17,11 +17,6 @@ game.gui.screen.WinScreen = me.ScreenObject.extend({
             this.font = new me.BitmapFont("32x32_font", 32); 
         }
         
-        if((Math.floor(Math.random() * 2) + 1) == 1)
-	        me.audio.playTrack("bg_win_1");
-        else
-        	me.audio.playTrack("bg_win_2");
-        
         // enable the keyboard
         me.input.bindKey(me.input.KEY.ENTER, "enter", true); 
     },

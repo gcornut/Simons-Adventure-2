@@ -27,8 +27,6 @@ game.gui.screen.PlayScreen = me.ScreenObject.extend({
 		me.input.bindKey(me.input.KEY.SPACE, "shoot", true);
 		
 		
-        me.audio.stopTrack();
-        me.audio.playTrack("bg_game_music");
     },
 	
 	onDestroyEvent: function() {

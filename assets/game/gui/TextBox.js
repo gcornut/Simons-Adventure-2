@@ -1,5 +1,3 @@
-//@require game.gui.Component
-
 game.gui.TextBox = game.gui.Component.extend({
 	
 	/**

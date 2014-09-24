@@ -1,4 +1,5 @@
-module.exports = function(path, folders, compressJS) {		
+module.exports = function(path, folders, compressJS) {	
+	var esprima = require('esprima');	
 	var packer = require('node.packer');
 	compressJS = compressJS == undefined ? true : compressJS;
 	
@@ -19,36 +20,67 @@ module.exports = function(path, folders, compressJS) {
 	
 	var gameFolder = path.join(folders.assets, "game");
 	var BreakException= {};
+	
 	//Walk through a dir and list js files
 	var walk = function(dir, done) {
 		function resolveImport(file, results) {
+		
+		    function objectName(object) {
+		        if(object.type === "MemberExpression")
+		        	return objectName(object.object) + "." + object.property.name;
+		        else if(object.type === "Identifier")
+		        	return object.name;
+		        else return "";
+		    }
+			
 			var index = results.indexOf(file);
 
-			if(index == -1) {
+			if(index == -1) {		    
+		    	var imported = false; 
 			    var data = fs.readFileSync(file);
-			    var lines = data.toString('utf-8', 0, Math.min(data.length, 400)).split("\n");
 			    
-			    try {
-			    	var imported = false; 
-			        lines.forEach(function(line) {
-			    	    if(matches = line.match(/\/\/@require\s+(.*)/)) {
-			    	    	var importFile = matches[1].trim().replace("game.", "").replace(/\./g, path.sep) + ".js";
-			    	    	importFile = path.join(gameFolder, importFile);
-			    	    	
-			    	    	var indexImport = results.indexOf(importFile);
-			    	    	
-			    	    	if(indexImport == -1) {
-			    		    	resolveImport(importFile, results);
-			    		    	indexImport = results.indexOf(importFile);
-			    	    	}
-			    	    	
-			    	    	results.splice(indexImport+1, 0, file);
-			    	    	imported = true;
-			    	    	throw BreakException;
-			    	    }
-			    	});
-			    } catch(e) {
-			    	if (e!==BreakException) throw e;
+			    //Parse JS
+			    var program = esprima.parse(data.toString('utf-8', 0, data.length));
+			    if(program.type === "Program") {
+			    	try {		    	
+					    program.body.forEach(function(statement) {
+						    if(statement.type === "ExpressionStatement") {
+						    	//Find assigment
+						    	if(statement.expression.type === "AssignmentExpression" && statement.expression.operator === "=") {
+						    		var assignement = statement.expression;
+						    		
+						    		//Using class method extend
+						    		if(assignement.right.type === "CallExpression" && assignement.right.callee.property.name === "extend") {
+							    		var classCalled = objectName(assignement.right.callee.object);
+							    		
+							    		//On a game class
+							    		if(classCalled.indexOf("game.") == 0) {
+											var classPath = path.join(
+												gameFolder, 
+												classCalled
+													.replace(/game\./g, "")
+													.replace(/\./g, path.sep) 
+													+ ".js"
+											);
+											
+											var indexImport = results.indexOf(classPath);
+				    	    	
+							    	    	if(indexImport == -1) {
+							    		    	resolveImport(classPath, results);
+							    		    	indexImport = results.indexOf(classPath);
+							    	    	}
+							    	    	
+							    	    	results.splice(indexImport+1, 0, file);
+							    	    	imported = true;
+							    	    	throw BreakException;
+							    		} 
+						    		}
+						    	}
+						    }
+					    });  
+			    	} catch(e) {
+				    	if(e !== BreakException) throw e;
+			    	}
 			    }
 			    
 			    if(!imported)

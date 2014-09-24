@@ -1,5 +1,3 @@
-//@require game.gui.Component
-
 game.gui.PopUpFrame = game.gui.Component.extend({
 	init: function(text, parentScreen) {
 		this.parent({x: 0, y: 0, width: me.video.getWidth(), height: me.video.getHeight(), cache: false});

@@ -1,5 +1,3 @@
-//@require game.gui.Component
-
 game.gui.InputText = game.gui.Component.extend({
 	
 	init: function(options) {

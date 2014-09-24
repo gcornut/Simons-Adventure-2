@@ -1,5 +1,3 @@
-//@require game.gui.Component
-
 /**
  * Textured frame used as a border for GUI Components
  */

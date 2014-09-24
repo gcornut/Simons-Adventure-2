@@ -1,5 +1,3 @@
-//@require game.gui.Panel
-
 game.gui.ScrollPanel = game.gui.Panel.extend({
 
 	init: function(options) {

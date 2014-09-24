@@ -1,5 +1,3 @@
-//@require game.gui.TextBox
-
 game.gui.Button = game.gui.TextBox.extend({
 	
 	init: function(options) {
