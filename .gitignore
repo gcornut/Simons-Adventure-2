@@ -1,5 +1,10 @@
+# Mac
 .DS_Store
+
+# Node
 node_modules/
+
+# Resources
 #public/css/*.css
 public/js/*.js
 *.psd
